@@ -3,9 +3,11 @@ import './App.css';
 import styled from 'styled-components'
 
 import Graph from './components/Graph'
+import SevenDayForecast from './components/SevenDayForecast'
 
 const Container = styled.div`
-  width: 50%;
+  width: 100%;
+  height: 100vh;
 
 `
 
@@ -13,7 +15,10 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <Graph /* width={600} height={400} */ />
+      <Container>
+        <SevenDayForecast />
+        <Graph />
+      </Container>
     </div>
   );
 }

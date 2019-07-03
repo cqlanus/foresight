@@ -1,41 +1,60 @@
 import React, { useEffect, useState } from 'react'
-import { LineChart, ComposedChart, Area, Line, XAxis, YAxis, Tooltip } from 'recharts'
-import { format } from 'date-fns'
+import { ResponsiveContainer, ComposedChart, Area, Line, XAxis, YAxis, Tooltip } from 'recharts'
+// import { format } from 'date-fns'
+// import moment from 'moment-timezone'
 import { FaLocationArrow } from 'react-icons/fa'
+import styled from 'styled-components'
+import { /* getWeatherBitHourlyForecast, */ getDarkSkyHourlyForecast } from "../hooks/nws"
 
-import { getForecastData, getSevenDayForecast } from "../hooks/nws"
+const DATA_NAME = {
+    TEMP: "Temperature",
+    DEW: "Dew point",
+    WIND_SP: "Wind speed",
+    CHANCE_PRECIP: "Chance precip",
+    QTY_PRECIP: "Qty precip",
+    CLOUD_COVER: "Cloud cover",
+    HUMIDITY: "Humidity",
+    PRESSURE: "Pressure",
+}
 
+const Container = styled.div`
+    width: 100%;
+    height: 100%;
+`
 const Graph = ({ width = window.innerWidth, height = window.innerHeight }) => {
 
-    const initial: { [key: string]: any } = {}
-    const [gridData, setGridData] = useState(initial)
-    const [sevenDay, setSevenDay] = useState([])
-    console.log({ sevenDay })
-    const getData = () => {
-        Promise.all([getSevenDayForecast(sevenDay), getForecastData(gridData)])
-            .then(([sevenDayForecast, gridData]) => {
-                setGridData(gridData)
-                setSevenDay(sevenDayForecast)
-            })
-            .catch(error => console.log({ error }))
+    const [gridData, setGridData] = useState([])
+    const getData = async () => {
+        try {
+            const darkSkyData = await getDarkSkyHourlyForecast()
+            console.log({ darkSkyData })
+            // const data = await getWeatherBitHourlyForecast()
+            // console.log({data})
+            setGridData(darkSkyData.hourly.data)
+        } catch (error) {
+            console.log({ error })
+        }
     }
 
-    useEffect(getData, [gridData])
+    useEffect(() => {
+        getData()
+    }, [])
 
-    const allData: object[] = Object.entries(gridData).map(([k, v]: any) => {
-        return { ...v, key: k }
-    })
 
-    // const convertToF = (val: any) => val.temperature && ((9 / 5) * val.temperature + 32).toFixed(2)
-    const formatTime = (val: any) => val.key && format(val.key, "M/D")
+    // const convertToF = (val: any) => val.temp && ((9 / 5) * val.temp + 32).toFixed(2)
+    // const formatTime = (val: any) => val.timestamp_local && format(val.timestamp_local, "ha")
+    const convertToPercent = (label: string) => (stuff: { [key: string]: number }) => {
+        return stuff[label] * 100
+    }
 
-    const renderDot = (props: { key: string, height: number, cy: number, cx: number, payload: { key: string, windDirection: number } }) => {
-        const { payload: { key, windDirection } } = props
-        const hasBothXAndY = props.cx && props.cy && windDirection
+    const renderArrow = (props: { index: number, key: string, height: number, cy: number, cx: number, payload: { key: string, windBearing: number } }) => {
+        const { payload: { key, windBearing }, index } = props
+        if (index % 2 > 0) { return }
+        const hasBothXAndY = props.cx && props.cy && windBearing
         const transform = `
             translate(${props.cx} ${props.cy})
-            rotate(${windDirection - 45} 3 0)
-            scale(.5)
+            rotate(${windBearing - 45 + 180})
+            scale(.6)
         `
         return hasBothXAndY &&
             <FaLocationArrow
@@ -46,30 +65,59 @@ const Graph = ({ width = window.innerWidth, height = window.innerHeight }) => {
                 transform={transform} />
     }
 
-    return (
-        <div className="blarg">
-            <LineChart width={width} height={(height / 3)} data={allData}>
-                <Line dot={false} connectNulls type="monotone" dataKey={"temperature"} stroke="#8884d8" strokeWidth={2} />
-                <Line dot={false} connectNulls type="monotone" dataKey={"dewpoint"} stroke="goldenrod" strokeWidth={2} />
-                <Tooltip />
-                <XAxis tick={false} />
-                <YAxis />
-            </LineChart>
-
-            <ComposedChart width={width} height={(height / 3)} data={allData}>
-                <Line dot={false} connectNulls type="monotone" dataKey="relativeHumidity" stroke="indianred" strokeWidth={2} />
-                <Area connectNulls type="step" dataKey="skyCover" fill="lightgrey" stroke="grey" />
-                <Area connectNulls type="step" dataKey="probabilityOfPrecipitation" fill="#99d6f7" stroke="steelblue" />
-                <Tooltip />
-                <XAxis tick={false} />
-                <YAxis />
+    const renderTemp = () => (
+        <ResponsiveContainer height={"33%"} >
+            <ComposedChart syncId="weather" data={gridData}>
+                <Line dot={false} connectNulls type="monotone" dataKey="temperature" stroke="navy" strokeWidth={2} name={DATA_NAME.TEMP} />
+                <Line dot={false} connectNulls type="monotone" dataKey="dewPoint" stroke="orange" strokeWidth={2} name={DATA_NAME.DEW} />
+                <Tooltip /* formatter={(val: string | number | (string | number)[]) => Math.round(+val)} */ />
+                <XAxis tick={false} /* dataKey="time" tickFormatter={t => {
+                    const newTime = `${t}000`
+                    const time = moment(+newTime).tz("America/Chicago")
+                    console.log({time})
+                    return time.format('dd ha')
+                    }}  *//>
+                <YAxis domain={["dataMin - 10", "dataMax + 10"]} />
+                <YAxis orientation="right" yAxisId="right" />
             </ComposedChart>
-            <LineChart width={width} height={(height / 3)} data={allData}>
-                <Line dot={renderDot} connectNulls type="monotone" dataKey={"windSpeed"} stroke="#000" strokeWidth={2} />
-                <XAxis tickCount={7} dataKey={formatTime} />
+        </ResponsiveContainer>
+    )
+
+    const renderPercent = () => (
+        <ResponsiveContainer height={"33%"} >
+            <ComposedChart syncId="weather" data={gridData}>
+                <Area yAxisId="left" connectNulls type="step" dataKey={convertToPercent("cloudCover")} fill="lightgrey" stroke="grey" name={DATA_NAME.CLOUD_COVER} />
+                <Area yAxisId="left" connectNulls type="step" dataKey={convertToPercent("precipProbability")} fill="#99d6f7" stroke="steelblue" name={DATA_NAME.CHANCE_PRECIP} />
+                <Area yAxisId="left" connectNulls type="step" dataKey={convertToPercent("precipIntensity")} fill="violet" stroke="steelblue" name={DATA_NAME.QTY_PRECIP} />
+                <Line yAxisId="left" dot={false} connectNulls type="monotone" dataKey={convertToPercent("humidity")} stroke="indianred" strokeWidth={2} name={DATA_NAME.HUMIDITY} />
+                <Line yAxisId="right" dot={false} connectNulls type="monotone" dataKey="pressure" stroke="black" strokeWidth={2} name={DATA_NAME.PRESSURE} />
+                <Tooltip /* formatter={(val: string | number | (string | number)[]) => Number(val).toFixed(2)} */ />
+                <XAxis tick={false} />
+                <YAxis yAxisId="left" />
+                <YAxis orientation="right" domain={["dataMin - 3", "dataMax + 3"]} yAxisId="right" />
+            </ComposedChart>
+        </ResponsiveContainer>
+    )
+
+    const renderWind = () => (
+        <ResponsiveContainer height={"33%"} >
+            <ComposedChart syncId="weather" data={gridData}>
+                <Line dot={renderArrow} connectNulls type="monotone" dataKey="windSpeed" stroke="#000" strokeWidth={2} />
+                <Line yAxisId="right" dot={false} connectNulls type="monotone" dataKey="windBearing" stroke="pink" strokeWidth={2} />
+                <Line dot={false} connectNulls type="monotone" dataKey="windGust" stroke="teal" strokeWidth={2} />
+                <XAxis /* tickCount={7} dataKey={formatTime}  */ tick={false} />
                 <YAxis />
-            </LineChart>
-        </div>
+                <YAxis orientation="right" yAxisId="right" />
+            </ComposedChart>
+        </ResponsiveContainer>
+    )
+
+    return (
+        <Container>
+            {renderTemp()}
+            {renderPercent()}
+            {renderWind()}
+        </Container>
     )
 }
 
