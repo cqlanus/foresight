@@ -58,14 +58,40 @@ const TempContainer = styled.div`
     font-size: 14px;
     font-weight: bold;
 
+    @media (max-width: 700px) {
+        flex-direction: column;
+        flex-grow: 0;
+    }
 `
 
-const HiTemp = styled.p`
+const P = styled.p`
+    margin: 0.5em 0;
+`
+
+const HiTemp = styled(P)`
     color: OrangeRed;
 `
 
-const LoTemp = styled.p`
+const LoTemp = styled(P)`
     color: steelblue;
+`
+
+const Separator = styled.span`
+    margin: 0 5px;
+    font-size: 18px;
+    font-weight: normal;
+
+    &:before {
+        content: "|"
+    }
+
+    @media (max-width: 700px) {
+        &:before {
+            content: ""
+        }
+        border-bottom: 2px solid #000;
+        width: 100%;
+    }
 `
 
 interface Props {
@@ -75,11 +101,10 @@ interface Props {
 const SevenDayForecast = ({ sevenDay }: Props) => {
 
     const renderTempRow = (hi: number, lo: number) => {
-        const pipeStyle = { margin: "0 5px" }
         return (
             <TempContainer>
                 <HiTemp>{Math.round(hi)}</HiTemp>
-                <span style={pipeStyle}>{" | "}</span>
+                <Separator></Separator>
                 <LoTemp>{Math.round(lo)}</LoTemp>
             </TempContainer>
         )

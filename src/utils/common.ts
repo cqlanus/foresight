@@ -21,3 +21,9 @@ export const isMorning = (time: number) => {
     const formatted = moment(time).format("a")
     return formatted === "am"
 }
+
+export const convertToPercent = (label: string) => (stuff: {
+    [key: string]: number
+}) => {
+    return stuff[label] * 100
+}
