@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { ResponsiveContainer, CartesianGrid, ComposedChart, Area, Line, XAxis, YAxis, Tooltip } from 'recharts'
+import { ResponsiveContainer, CartesianGrid, ComposedChart, Area, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 import { FaLocationArrow } from 'react-icons/fa'
+import { WiMoonFirstQuarter } from "react-icons/wi"
 import styled from 'styled-components'
 import { getDarkSkyHourlyForecast } from "../hooks/nws"
-import { getDarkskyTimestamp, formatDate } from '../utils/common';
+import { getDarkskyTimestamp, isMorning, formatDate } from '../utils/common';
 
 const DATA_NAME = {
-    TEMP: " ",
-    DEW: " ",
-    WIND_SP: "Wind speed",
+    TEMP: "Temperature",
+    DEW: "Dewpoint",
+    WIND_SPEED: "Wind speed",
+    WIND_GUST: "Wind gust",
     CHANCE_PRECIP: "Chance precip",
     QTY_PRECIP: "Qty precip",
     CLOUD_COVER: "Cloud cover",
@@ -24,6 +26,45 @@ interface Props {
     sevenDay: Array<any>
 }
 
+const AstroGraphic = ({ payload, show }: { payload?: any, show: boolean }) => {
+    const time = payload.value
+    const isAm = isMorning(time)
+    const formatted = formatDate(time, "h:ma")
+    const rotate = isAm ? -90 : 90
+    const rotateVal = isAm ? `${rotate} 12 20` : `${rotate} -2 10`
+    const transform = `
+        translate(${payload.coordinate},-10)
+        rotate(${rotateVal})
+    `
+    return <g transform={transform}>
+        {show && <WiMoonFirstQuarter fill={isAm ? "gold" : "orange"} />}
+    </g>
+}
+
+const getAstroTicks = (sevenDay: Array<any>) => {
+    return sevenDay.reduce((acc, day) => {
+        const { sunriseTime, sunsetTime } = day
+        return [...acc, sunriseTime, sunsetTime]
+    }, [])
+}
+
+const WunderXAxis = (sevenDay: Array<any>, showLabels: boolean = false) => {
+    const ticks = getAstroTicks(sevenDay)
+    return <XAxis
+        orientation="top"
+        type="number"
+        scale='time'
+        domain={["dataMin", "dataMax"]}
+        dataKey={d => getDarkskyTimestamp(d.time)}
+        ticks={ticks}
+        allowDataOverflow
+        tick={<AstroGraphic show={showLabels} />}
+        tickCount={ticks.length}
+        interval={0}
+        height={20}
+    />
+}
+
 const Graph = ({ sevenDay }: Props) => {
 
     const [gridData, setGridData] = useState([])
@@ -31,8 +72,6 @@ const Graph = ({ sevenDay }: Props) => {
         try {
             const darkSkyData = await getDarkSkyHourlyForecast()
             console.log({ darkSkyData })
-            // const data = await getWeatherBitHourlyForecast()
-            // console.log({data})
             setGridData(darkSkyData.hourly.data)
         } catch (error) {
             console.log({ error })
@@ -53,10 +92,7 @@ const Graph = ({ sevenDay }: Props) => {
     }
 
     const astronomyData = getAstronomyData()
-    console.log({ astronomyData })
 
-    // const convertToF = (val: any) => val.temp && ((9 / 5) * val.temp + 32).toFixed(2)
-    // const formatTime = (val: any) => val.timestamp_local && format(val.timestamp_local, "ha")
     const convertToPercent = (label: string) => (stuff: { [key: string]: number }) => {
         return stuff[label] * 100
     }
@@ -82,6 +118,11 @@ const Graph = ({ sevenDay }: Props) => {
 
 
     const numberFormatter = (val: string | number | (string | number)[]) => Number.parseFloat(String(val)).toPrecision(3)
+    const tooltipFormatter = (val: string | number | (string | number)[], name: string) => {
+        const value = numberFormatter(val)
+        return [value, " "]
+    }
+    const labelFormatter = (d: string | number) => formatDate(+d, "ha")
 
 
     const tooltipStyle = { backgroundColor: 'rgba(255,255,255,.7)', border: 'none' }
@@ -92,10 +133,12 @@ const Graph = ({ sevenDay }: Props) => {
 
                 <Line dot={false} connectNulls type="monotone" dataKey="temperature" stroke="navy" strokeWidth={2} name={DATA_NAME.TEMP} />
                 <Line dot={false} connectNulls type="monotone" dataKey="dewPoint" stroke="orange" strokeWidth={2} name={DATA_NAME.DEW} />
-                <Tooltip contentStyle={tooltipStyle} formatter={numberFormatter} separator={" "} />
-                <XAxis dataKey={d => formatDate(getDarkskyTimestamp(d.time), "ha")} />
+                <Tooltip labelFormatter={labelFormatter} contentStyle={tooltipStyle} formatter={tooltipFormatter} separator={" "} />
+                {WunderXAxis(astronomyData, true)}
+
                 <YAxis domain={["dataMin - 10", "dataMax + 10"]} />
                 <YAxis orientation="right" yAxisId="right" />
+                <Legend verticalAlign="bottom" height={36} />
             </ComposedChart>
         </ResponsiveContainer>
     )
@@ -110,10 +153,11 @@ const Graph = ({ sevenDay }: Props) => {
                 <Area yAxisId="left" connectNulls type="step" dataKey={convertToPercent("precipIntensity")} fill="violet" stroke="violet" name={DATA_NAME.QTY_PRECIP} />
                 <Line yAxisId="left" dot={false} connectNulls type="monotone" dataKey={convertToPercent("humidity")} stroke="indianred" strokeWidth={2} name={DATA_NAME.HUMIDITY} />
                 <Line yAxisId="right" dot={false} connectNulls type="monotone" dataKey="pressure" stroke="black" strokeWidth={2} name={DATA_NAME.PRESSURE} />
-                <Tooltip contentStyle={tooltipStyle} formatter={numberFormatter} separator={" "} />
-                <XAxis tick={false} />
+                <Tooltip labelFormatter={labelFormatter} contentStyle={tooltipStyle} formatter={tooltipFormatter} separator={" "} />
+                {WunderXAxis(astronomyData)}
                 <YAxis yAxisId="left" />
                 <YAxis orientation="right" domain={["dataMin - 3", "dataMax + 3"]} yAxisId="right" />
+                <Legend verticalAlign="bottom" height={36} />
             </ComposedChart>
         </ResponsiveContainer>
     )
@@ -123,12 +167,13 @@ const Graph = ({ sevenDay }: Props) => {
             <ComposedChart syncId="weather" data={gridData}>
                 <CartesianGrid stroke="#eee" />
 
-                <Line dot={renderArrow} connectNulls type="monotone" dataKey="windSpeed" stroke="#000" strokeWidth={2} />
-                <Line dot={false} connectNulls type="monotone" dataKey="windGust" stroke="teal" strokeWidth={2} />
-                <XAxis /* tickCount={7} dataKey={formatTime}  */ tick={false} />
+                <Line dot={renderArrow} connectNulls type="monotone" dataKey="windSpeed" stroke="#000" strokeWidth={2} name={DATA_NAME.WIND_SPEED} />
+                <Line dot={false} connectNulls type="monotone" dataKey="windGust" stroke="teal" strokeWidth={2} name={DATA_NAME.WIND_GUST} />
+                {WunderXAxis(astronomyData)}
                 <YAxis />
                 <YAxis orientation="right" yAxisId="right" />
-                <Tooltip contentStyle={tooltipStyle} formatter={numberFormatter} separator={" "} />
+                <Tooltip labelFormatter={labelFormatter} contentStyle={tooltipStyle} formatter={tooltipFormatter} separator={" "} />
+                <Legend verticalAlign="bottom" height={36} />
             </ComposedChart>
         </ResponsiveContainer>
     )

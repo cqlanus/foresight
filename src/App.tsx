@@ -24,7 +24,6 @@ const App: React.FC = () => {
           data: any
         }
       } = await getDarkSkyHourlyForecast()
-      console.log({ daily: darkSkyData.daily.data })
       setSevenDay(darkSkyData.daily.data)
     } catch (error) {
       console.log({ error })

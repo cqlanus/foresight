@@ -16,3 +16,8 @@ export const formatDate = (time: number, format: string = "dd") =>
     moment(time)
         .tz("America/Chicago")
         .format(format)
+
+export const isMorning = (time: number) => {
+    const formatted = moment(time).format("a")
+    return formatted === "am"
+}
