@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { format } from 'date-fns'
-import moment from 'moment-timezone'
+
+import { getDarkskyTimestamp, formatDate } from '../utils/common'
 
 import ForecastIcon from './ForecastIcon'
-
-import { getSevenDayForecast, getDarkSkyHourlyForecast } from "../hooks/nws"
 
 interface Forecast {
     isDaytime: boolean
@@ -54,7 +52,6 @@ const Summary = styled.span`
 
 const TempContainer = styled.div`
     flex-grow: 1;
-    align-self: stretch;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,35 +68,18 @@ const LoTemp = styled.p`
     color: steelblue;
 `
 
-const SevenDayForecast = () => {
-    const [sevenDay, setSevenDay] = useState([])
+interface Props {
+    sevenDay: Array<any>
+}
 
-    const getData = async () => {
-        try {
-            const darkSkyData = await getDarkSkyHourlyForecast()
-            console.log({ daily: darkSkyData.daily.data })
-            setSevenDay(darkSkyData.daily.data)
-        } catch (error) {
-            console.log({ error })
-        }
-    }
-
-    useEffect(() => {
-        getData()
-    }, [])
-
-
-    const getDarkskyTimestamp = (time: number): number => {
-        const timeString = `${time}000`
-        return +timeString
-    }
-    const formatDateName = (time: number) => moment(time).tz("America/Chicago").format("dd")
+const SevenDayForecast = ({ sevenDay }: Props) => {
 
     const renderTempRow = (hi: number, lo: number) => {
+        const pipeStyle = { margin: "0 5px" }
         return (
             <TempContainer>
                 <HiTemp>{Math.round(hi)}</HiTemp>
-                <span style={{ margin: "0 5px" }}>{" | "}</span>
+                <span style={pipeStyle}>{" | "}</span>
                 <LoTemp>{Math.round(lo)}</LoTemp>
             </TempContainer>
         )
@@ -107,7 +87,7 @@ const SevenDayForecast = () => {
 
     const renderDaytimeForecast = () => sevenDay.map((f: Forecast, idx: number) => (
         <DayTileContainer key={idx}>
-            {formatDateName(getDarkskyTimestamp(f.time))}
+            {formatDate(getDarkskyTimestamp(f.time))}
             {renderTempRow(f.temperatureHigh, f.temperatureLow)}
 
             <IconContainer>

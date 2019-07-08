@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { ResponsiveContainer, ComposedChart, Area, Line, XAxis, YAxis, Tooltip } from 'recharts'
-// import { format } from 'date-fns'
-// import moment from 'moment-timezone'
+import { ResponsiveContainer, CartesianGrid, ComposedChart, Area, Line, XAxis, YAxis, Tooltip } from 'recharts'
 import { FaLocationArrow } from 'react-icons/fa'
 import styled from 'styled-components'
-import { /* getWeatherBitHourlyForecast, */ getDarkSkyHourlyForecast } from "../hooks/nws"
+import { getDarkSkyHourlyForecast } from "../hooks/nws"
+import { getDarkskyTimestamp, formatDate } from '../utils/common';
 
 const DATA_NAME = {
-    TEMP: "Temperature",
-    DEW: "Dew point",
+    TEMP: " ",
+    DEW: " ",
     WIND_SP: "Wind speed",
     CHANCE_PRECIP: "Chance precip",
     QTY_PRECIP: "Qty precip",
@@ -21,7 +20,11 @@ const Container = styled.div`
     width: 100%;
     height: 100%;
 `
-const Graph = ({ width = window.innerWidth, height = window.innerHeight }) => {
+interface Props {
+    sevenDay: Array<any>
+}
+
+const Graph = ({ sevenDay }: Props) => {
 
     const [gridData, setGridData] = useState([])
     const getData = async () => {
@@ -40,6 +43,17 @@ const Graph = ({ width = window.innerWidth, height = window.innerHeight }) => {
         getData()
     }, [])
 
+    const getAstronomyData = () => {
+        return sevenDay.map(({ time, sunriseTime, sunsetTime, moonPhase }) => ({
+            time: getDarkskyTimestamp(time),
+            sunriseTime: getDarkskyTimestamp(sunriseTime),
+            sunsetTime: getDarkskyTimestamp(sunsetTime),
+            moonPhase
+        }))
+    }
+
+    const astronomyData = getAstronomyData()
+    console.log({ astronomyData })
 
     // const convertToF = (val: any) => val.temp && ((9 / 5) * val.temp + 32).toFixed(2)
     // const formatTime = (val: any) => val.timestamp_local && format(val.timestamp_local, "ha")
@@ -65,18 +79,21 @@ const Graph = ({ width = window.innerWidth, height = window.innerHeight }) => {
                 transform={transform} />
     }
 
+
+
+    const numberFormatter = (val: string | number | (string | number)[]) => Number.parseFloat(String(val)).toPrecision(3)
+
+
+    const tooltipStyle = { backgroundColor: 'rgba(255,255,255,.7)', border: 'none' }
     const renderTemp = () => (
         <ResponsiveContainer height={"33%"} >
             <ComposedChart syncId="weather" data={gridData}>
+                <CartesianGrid stroke="#eee" />
+
                 <Line dot={false} connectNulls type="monotone" dataKey="temperature" stroke="navy" strokeWidth={2} name={DATA_NAME.TEMP} />
                 <Line dot={false} connectNulls type="monotone" dataKey="dewPoint" stroke="orange" strokeWidth={2} name={DATA_NAME.DEW} />
-                <Tooltip /* formatter={(val: string | number | (string | number)[]) => Math.round(+val)} */ />
-                <XAxis tick={false} /* dataKey="time" tickFormatter={t => {
-                    const newTime = `${t}000`
-                    const time = moment(+newTime).tz("America/Chicago")
-                    console.log({time})
-                    return time.format('dd ha')
-                    }}  *//>
+                <Tooltip contentStyle={tooltipStyle} formatter={numberFormatter} separator={" "} />
+                <XAxis dataKey={d => formatDate(getDarkskyTimestamp(d.time), "ha")} />
                 <YAxis domain={["dataMin - 10", "dataMax + 10"]} />
                 <YAxis orientation="right" yAxisId="right" />
             </ComposedChart>
@@ -86,12 +103,14 @@ const Graph = ({ width = window.innerWidth, height = window.innerHeight }) => {
     const renderPercent = () => (
         <ResponsiveContainer height={"33%"} >
             <ComposedChart syncId="weather" data={gridData}>
+                <CartesianGrid stroke="#eee" />
+
                 <Area yAxisId="left" connectNulls type="step" dataKey={convertToPercent("cloudCover")} fill="lightgrey" stroke="grey" name={DATA_NAME.CLOUD_COVER} />
                 <Area yAxisId="left" connectNulls type="step" dataKey={convertToPercent("precipProbability")} fill="#99d6f7" stroke="steelblue" name={DATA_NAME.CHANCE_PRECIP} />
-                <Area yAxisId="left" connectNulls type="step" dataKey={convertToPercent("precipIntensity")} fill="violet" stroke="steelblue" name={DATA_NAME.QTY_PRECIP} />
+                <Area yAxisId="left" connectNulls type="step" dataKey={convertToPercent("precipIntensity")} fill="violet" stroke="violet" name={DATA_NAME.QTY_PRECIP} />
                 <Line yAxisId="left" dot={false} connectNulls type="monotone" dataKey={convertToPercent("humidity")} stroke="indianred" strokeWidth={2} name={DATA_NAME.HUMIDITY} />
                 <Line yAxisId="right" dot={false} connectNulls type="monotone" dataKey="pressure" stroke="black" strokeWidth={2} name={DATA_NAME.PRESSURE} />
-                <Tooltip /* formatter={(val: string | number | (string | number)[]) => Number(val).toFixed(2)} */ />
+                <Tooltip contentStyle={tooltipStyle} formatter={numberFormatter} separator={" "} />
                 <XAxis tick={false} />
                 <YAxis yAxisId="left" />
                 <YAxis orientation="right" domain={["dataMin - 3", "dataMax + 3"]} yAxisId="right" />
@@ -102,12 +121,14 @@ const Graph = ({ width = window.innerWidth, height = window.innerHeight }) => {
     const renderWind = () => (
         <ResponsiveContainer height={"33%"} >
             <ComposedChart syncId="weather" data={gridData}>
+                <CartesianGrid stroke="#eee" />
+
                 <Line dot={renderArrow} connectNulls type="monotone" dataKey="windSpeed" stroke="#000" strokeWidth={2} />
-                <Line yAxisId="right" dot={false} connectNulls type="monotone" dataKey="windBearing" stroke="pink" strokeWidth={2} />
                 <Line dot={false} connectNulls type="monotone" dataKey="windGust" stroke="teal" strokeWidth={2} />
                 <XAxis /* tickCount={7} dataKey={formatTime}  */ tick={false} />
                 <YAxis />
                 <YAxis orientation="right" yAxisId="right" />
+                <Tooltip contentStyle={tooltipStyle} formatter={numberFormatter} separator={" "} />
             </ComposedChart>
         </ResponsiveContainer>
     )
