@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Modal, Header, Card } from 'semantic-ui-react'
+import { Button, Modal, Header } from 'semantic-ui-react'
 import styled from 'styled-components'
 import { State, UnitsMap, ValueOfUnitsMap } from '../hooks/units'
 
@@ -19,20 +19,29 @@ const ButtonGroup = styled.div`
 `
 
 const ModalButton = <Button fluid>Customize</Button>
-let StateKeys: keyof State
+
 interface Props {
     selectedUnits: State
     allUnits: UnitsMap
+    handleClick: (key: keyof State, value: string) => () => any
 }
 
-const UnitsModal = ({selectedUnits, allUnits}: Props) => {
-    const renderGroup = (name: string, items: Array<{ value: string, selected: boolean}>) => {
+const UnitsModal = ({selectedUnits, allUnits, handleClick}: Props) => {
+
+    const renderGroup = (name: string, items: Array<{ value: string, key: keyof State, selected: boolean}>) => {
         return (
-            <ButtonGroup>
+            <ButtonGroup key={name}>
                 <Modal.Actions>
                     <Header as={"h3"} color="grey">{name}</Header>
                     <Button.Group widths={4}>
-                        {items.map((item, idx) => <Button active={item.selected} fluid key={idx} >{item.value}</Button>)}
+                        {
+                            items.map((item, idx) => 
+                                <Button 
+                                    onClick={handleClick(item.key, item.value)} 
+                                    primary={item.selected} 
+                                    fluid 
+                                    key={idx}>{item.value}</Button>)
+                        }
                     </Button.Group>
                 </Modal.Actions>
             </ButtonGroup>
@@ -41,10 +50,14 @@ const UnitsModal = ({selectedUnits, allUnits}: Props) => {
 
     const renderUnits = () => {
         return Object.values(allUnits).map((value: ValueOfUnitsMap) => {
-            const values: Array<{ value: string, selected: boolean}> = Object.values(value.units).map(val => ({
+            const currentSelected = selectedUnits[value.key]
+            const values: Array<{ value: string, key: keyof State, selected: boolean}> = Object.values(value.units).map(val => {
+                return {
                     value: val,
-                    selected: selectedUnits[value.key] === val
-                }))
+                    key: value.key,
+                    selected: currentSelected === val
+                }
+            })
             return renderGroup(value.name, values)
         })
     }
