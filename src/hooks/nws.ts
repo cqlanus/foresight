@@ -1,6 +1,7 @@
 import { GridDataProperties } from "../types/nws"
 import { FORECAST_LINKS } from "../constants/nws"
 import { request } from "../utils/common"
+import darkSkyData from "../constants/darksky.json"
 
 const lat = "41.8781"
 const lng = "-87.6298"
@@ -91,17 +92,18 @@ const getAllGridData = async () => {
 }
 
 export const getDarkSkyHourlyForecast = async () => {
-    const url = "http://localhost:5000/forecast"
-    const headers = {
-        "Access-Control-Allow-Origin": "http://localhost:3000/",
-        "Access-Control-Allow-Credential": true,
-    }
-    const params = {
-        credentials: "omit",
-        headers,
-    }
-    const response = await request(url, params)
-    return response
+    // const url = "http://localhost:5000/forecast"
+    // const headers = {
+    //     "Access-Control-Allow-Origin": "http://localhost:3000/",
+    //     "Access-Control-Allow-Credential": true,
+    // }
+    // const params = {
+    //     credentials: "omit",
+    //     headers,
+    // }
+    // const response = await request(url, params)
+    // return response
+    return darkSkyData
 }
 
 export const getForecastData = async () => {

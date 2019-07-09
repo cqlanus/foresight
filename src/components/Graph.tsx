@@ -13,15 +13,36 @@ const AXIS_TYPE = {
     LEFT: "left"
 }
 
+const DEVICE = {
+    mobile: { width: 700, multiple: 10 },
+    tablet: { width: 900, multiple: 5 },
+    defualt: { width: 900, multiple: 3 },
+}
+
+const getMultiple = (width: number) => {
+    if (width < DEVICE.mobile.width) {
+        return DEVICE.mobile.multiple
+    } else if (width < DEVICE.tablet.width) {
+        return DEVICE.tablet.multiple
+    } else {
+        return DEVICE.defualt.multiple
+    }
+}
+
 const renderArrow = (props: { index: number, key: string, height: number, cy: number, cx: number, payload: { key: string, windBearing: number } }) => {
     const { payload: { windBearing }, key, cy, cx, height, index } = props
-    if (index % 2 > 0) { return }
+    const smallWindow = window.innerWidth < 700
+    const multiple = getMultiple(window.innerWidth)
+    if (index % multiple > 0) { return }
     const hasBothXAndY = cx && cy && windBearing
+    const yVal = smallWindow ? height : cy
+
     const transform = `
-        translate(${cx} ${cy})
-        rotate(${windBearing - 45 + 180})
+        translate(${cx} ${yVal})
+        rotate(${windBearing - 45 + 180} 4 4)
         scale(.6)
     `
+    // console.log({ yVal })
     return hasBothXAndY &&
         <FaLocationArrow
             key={key}
@@ -110,8 +131,8 @@ const SKY_GRAPH = [DATA_MAP.CLOUD_COVER, DATA_MAP.CHANCE_PRECIP, DATA_MAP.QTY_PR
 const WIND_GRAPH = [DATA_MAP.WIND_GUST, DATA_MAP.WIND_SPEED]
 
 const Container = styled.div`
-    width: 100%;
     height: 100%;
+    /* min-width: 500px; */
 `
 interface Props {
     dailyData: Array<any>

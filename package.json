@@ -19,6 +19,8 @@
         "react-icons": "^3.7.0",
         "react-scripts": "3.0.1",
         "recharts": "^1.6.2",
+        "semantic-ui-css": "^2.4.1",
+        "semantic-ui-react": "^0.87.3",
         "styled-components": "^4.3.2",
         "typescript": "3.5.2"
     },
@@ -26,7 +28,8 @@
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "postinstall": "sh ./patch/apply_patches.sh"
     },
     "eslintConfig": {
         "extends": "react-app",

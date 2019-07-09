@@ -21,6 +21,7 @@ const Container = styled.div`
     justify-content: space-between;
     margin: 1em 60px;
     width: calc(100% - 120px);
+    /* min-width: calc(500px - 120px); */
 `
 
 const DayTileContainer = styled.div`
@@ -40,6 +41,9 @@ const IconContainer = styled.div`
     align-items: center;
     justify-content: center;
     font-size: 3em;
+    @media (max-width: 700px) {
+        font-size: 2.5em;
+    }
 `
 
 const Summary = styled.span`

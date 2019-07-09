@@ -1,0 +1,10 @@
+--- /Users/clanus/Desktop/original.ts	2019-07-09 13:34:08.000000000 -0500
++++ /Users/clanus/Desktop/updated.ts	2019-07-09 13:35:04.000000000 -0500
+@@ -833,6 +833,7 @@
+     itemStyle?: object;
+     labelStyle?: object;
+     wrapperStyle?: object;
++    contentStyle?: object;
+     cursor?: boolean | object | React.ReactElement | React.StatelessComponent<any>;
+     coordinate?: Coordinate;
+     position?: Coordinate;
