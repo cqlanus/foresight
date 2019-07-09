@@ -95,10 +95,10 @@ const Separator = styled.span`
 `
 
 interface Props {
-    sevenDay: Array<any>
+    dailyData: Array<any>
 }
 
-const SevenDayForecast = ({ sevenDay }: Props) => {
+const SevenDayForecast = ({ dailyData }: Props) => {
 
     const renderTempRow = (hi: number, lo: number) => {
         return (
@@ -110,7 +110,7 @@ const SevenDayForecast = ({ sevenDay }: Props) => {
         )
     }
 
-    const renderDaytimeForecast = () => sevenDay.map((f: Forecast, idx: number) => (
+    const renderDaytimeForecast = () => dailyData.map((f: Forecast, idx: number) => (
         <DayTileContainer key={idx}>
             {formatDate(getDarkskyTimestamp(f.time))}
             {renderTempRow(f.temperatureHigh, f.temperatureLow)}

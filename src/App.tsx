@@ -10,12 +10,12 @@ import { getDarkSkyHourlyForecast } from './hooks/nws'
 const Container = styled.div`
   width: 100%;
   height: 100vh;
-
 `
 
 const App: React.FC = () => {
 
-  const [sevenDay, setSevenDay] = useState([])
+  const initial: any = {}
+  const [forecast, setForecast] = useState(initial)
 
   const getData = async () => {
     try {
@@ -24,7 +24,8 @@ const App: React.FC = () => {
           data: any
         }
       } = await getDarkSkyHourlyForecast()
-      setSevenDay(darkSkyData.daily.data)
+      console.log({ darkSkyData })
+      setForecast(darkSkyData)
     } catch (error) {
       console.log({ error })
     }
@@ -35,11 +36,15 @@ const App: React.FC = () => {
   }, [])
 
 
+  const { daily = {}, hourly = {} } = forecast
+  const { data: dailyData = [] } = daily
+  const { data: hourlyData = [] } = hourly
+
   return (
     <div className="App">
       <Container>
-        <SevenDayForecast sevenDay={sevenDay} />
-        <Graph sevenDay={sevenDay} />
+        <SevenDayForecast dailyData={dailyData} />
+        <Graph dailyData={dailyData} hourlyData={hourlyData} />
       </Container>
     </div>
   );

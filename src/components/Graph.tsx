@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { FaLocationArrow } from 'react-icons/fa'
 import styled from 'styled-components'
-import { getDarkSkyHourlyForecast } from "../hooks/nws"
 import SubGraph from './SubGraph'
 
 const GRAPH_TYPE = {
@@ -67,7 +66,7 @@ const DATA_MAP = {
         name: "Chance precip",
         type: GRAPH_TYPE.AREA,
         color: "steelblue",
-        stroke: "navy",
+        stroke: "steelblue",
         isPercent: true,
         axis: AXIS_TYPE.LEFT,
     },
@@ -115,50 +114,36 @@ const Container = styled.div`
     height: 100%;
 `
 interface Props {
-    sevenDay: Array<any>
+    dailyData: Array<any>
+    hourlyData: Array<any>
 }
 
 
-const Graph = ({ sevenDay }: Props) => {
-
-    const [gridData, setGridData] = useState([])
-    const getData = async () => {
-        try {
-            const darkSkyData = await getDarkSkyHourlyForecast()
-            console.log({ darkSkyData })
-            setGridData(darkSkyData.hourly.data)
-        } catch (error) {
-            console.log({ error })
-        }
-    }
-
-    useEffect(() => {
-        getData()
-    }, [])
+const Graph = ({ dailyData, hourlyData }: Props) => {
 
     const renderTemp = () => (
         <SubGraph
-            data={gridData}
+            data={hourlyData}
             attributes={TEMP_GRAPH}
-            sevenDay={sevenDay}
+            dailyData={dailyData}
             domain={["dataMin - 10", "dataMax + 10"]}
             showAstroLabels />
     )
 
     const renderPercent = () => (
         <SubGraph
-            data={gridData}
+            data={hourlyData}
             attributes={SKY_GRAPH}
             domain={[0, 'auto']}
-            sevenDay={sevenDay} />
+            dailyData={dailyData} />
     )
 
     const renderWind = () => (
         <SubGraph
-            data={gridData}
+            data={hourlyData}
             attributes={WIND_GRAPH}
             domain={[0, 'auto']}
-            sevenDay={sevenDay} />
+            dailyData={dailyData} />
     )
 
     return (

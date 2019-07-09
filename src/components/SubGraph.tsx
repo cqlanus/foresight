@@ -17,15 +17,15 @@ const AstroGraphic = ({ payload, show }: { payload?: any, show: boolean }) => {
     </g>
 }
 
-const getAstroTicks = (sevenDay: Array<any>) => {
-    return sevenDay.reduce((acc, day) => {
+const getAstroTicks = (dailyData: Array<any>) => {
+    return dailyData.reduce((acc, day) => {
         const { sunriseTime, sunsetTime } = day
         return [...acc, sunriseTime, sunsetTime]
     }, [])
 }
 
-const WunderXAxis = (sevenDay: Array<any>, showLabels: boolean = false) => {
-    const ticks = getAstroTicks(sevenDay)
+const WunderXAxis = (dailyData: Array<any>, showLabels: boolean = false) => {
+    const ticks = getAstroTicks(dailyData)
     return <XAxis
         orientation="top"
         type="number"
@@ -67,7 +67,7 @@ interface DotProps {
 
 interface Props {
     data: Array<any>,
-    sevenDay: Array<any>,
+    dailyData: Array<any>,
     attributes: Array<Attribute>,
     showAstroLabels?: boolean,
     domain?: [AxisDomain, AxisDomain]
@@ -75,7 +75,7 @@ interface Props {
 
 const SubGraph = ({
     data,
-    sevenDay,
+    dailyData,
     attributes,
     showAstroLabels = false,
     domain = [0, 'auto'],
@@ -134,7 +134,7 @@ const SubGraph = ({
     }
 
     const getAstronomyData = () => {
-        return sevenDay.map(({ time, sunriseTime, sunsetTime, moonPhase }) => ({
+        return dailyData.map(({ time, sunriseTime, sunsetTime, moonPhase }) => ({
             time: getDarkskyTimestamp(time),
             sunriseTime: getDarkskyTimestamp(sunriseTime),
             sunsetTime: getDarkskyTimestamp(sunsetTime),

@@ -1,7 +1,6 @@
 import { GridDataProperties } from "../types/nws"
 import { FORECAST_LINKS } from "../constants/nws"
 import { request } from "../utils/common"
-const darkSkyData = require('../constants/darksky.json')
 
 const lat = "41.8781"
 const lng = "-87.6298"
@@ -91,26 +90,18 @@ const getAllGridData = async () => {
     }
 }
 
-const WEATHERBIT_KEY = "5d394d2880a547039ce94cd23a29676c"
-export const getWeatherBitForecast = async () => {
-    const url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${WEATHERBIT_KEY}&city=Chicago,IL`
-    const { data } = await request(url)
-    return data
-}
-
-export const getWeatherBitHourlyForecast = async () => {
-    const url = ` https://api.weatherbit.io/v2.0/forecast/hourly?key=${WEATHERBIT_KEY}&hours=50&lat=${lat}&lon=${lng}`
-    const { data } = await request(url)
-    return data
-}
-
 export const getDarkSkyHourlyForecast = async () => {
-    // const url = "http://localhost:5000/forecast"
-    // const headers = {
-    //     "Access-Control-Allow-Origin": "*"
-    // }
-    // const response = await request(url, {headers})
-    return darkSkyData
+    const url = "http://localhost:5000/forecast"
+    const headers = {
+        "Access-Control-Allow-Origin": "http://localhost:3000/",
+        "Access-Control-Allow-Credential": true,
+    }
+    const params = {
+        credentials: "omit",
+        headers,
+    }
+    const response = await request(url, params)
+    return response
 }
 
 export const getForecastData = async () => {
