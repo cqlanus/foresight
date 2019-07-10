@@ -37,7 +37,7 @@ const renderArrow = (props: { index: number, key: string, height: number, cy: nu
     const multiple = getMultiple(window.innerWidth)
     if (index % multiple > 0) { return }
     const hasBothXAndY = cx && cy && windBearing
-    const yVal = smallWindow ? height : cy
+    const yVal = (height - 10)
 
     const transform = `
         translate(${cx} ${yVal})

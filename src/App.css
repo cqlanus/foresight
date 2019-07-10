@@ -31,3 +31,14 @@
     transform: rotate(360deg);
   }
 }
+
+.react-toggle--checked .react-toggle-track {
+  background-color: goldenrod;
+}
+.react-toggle--checked:hover:not(.react-toggle--disabled) .react-toggle-track {
+  background-color: darkgoldenrod;
+}
+
+.react-toggle--checked .react-toggle-thumb {
+  border-color: goldenrod;
+}
