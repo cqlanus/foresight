@@ -23,43 +23,43 @@ export const UNITS_MAP: UnitsMap = {
         key: "degrees",
         name: "Degrees",
         units: {
-            F: "F",
-            C: "C",
+            "degF": "degF",
+            "degC": "degC",
         }
     },
     PRESSURE: {
         key: "pressure",
         name: "Pressure",
         units: {
-            MB: "mb",
-            IN: "in",
+            "in": "in",
+            "millibar": "millibar",
         }
     },
     SPEED: {
         key: "speed",
         name: "Speed",
         units: {
-            MPH: "mph",
-            KNT: "knot",
-            KMH: "km/h",
-            MS: "m/s",
+            "mi/h": "mi/h",
+            "knot": "knot",
+            "km/h": "km/h",
+            "m/s": "m/s",
         }
     },
     PRECIP: {
         key: "precip",
         name: "Precip",
         units: {
-            IN: "in",
-            MM: "mm",
+            "in": "in",
+            "mm": "mm",
         }
     },
 }
 
 export const initialUnitsState = {
-    degrees: UNITS_MAP.DEGREES.units.F,
-    pressure: UNITS_MAP.PRESSURE.units.IN,
-    precip: UNITS_MAP.PRECIP.units.IN,
-    speed: UNITS_MAP.SPEED.units.MPH,
+    degrees: UNITS_MAP.DEGREES.units["degF"],
+    pressure: UNITS_MAP.PRESSURE.units["millibar"],
+    precip: UNITS_MAP.PRECIP.units["in"],
+    speed: UNITS_MAP.SPEED.units["mi/h"],
 }
 
 export const unitsReducer = (initialUnitsState: State, action: Action) => {

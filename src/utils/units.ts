@@ -6,12 +6,14 @@ export const UNIT_CONVERSION_MAP = {
     mm: "mm",
     in: "in",
     mb: "mb",
-    knot: "knots",
+    knots: "knots",
     "km/s": "km/s",
     "m/s": "m/s"
 }
 
-type Unit = "C" | "F" | "mm" | "in" | "mb" | "knot" | "km/s" | "m/s"
+type Unit = "C" | "F" | "mm" | "in" | "mb" | "knots" | "km/s" | "m/s"
+
+export type UnitKeys = "degrees" | "pressure" | "percent" | "speed" | "precip"
 
 interface DegreesOptions {
     source: Unit

@@ -2,6 +2,7 @@ import React from 'react'
 import { ResponsiveContainer, CartesianGrid, ComposedChart, Area, Line, XAxis, YAxis, Tooltip, Legend, AxisDomain } from 'recharts'
 import { WiMoonFirstQuarter } from "react-icons/wi"
 import { getDarkskyTimestamp, isMorning, formatDate, convertToPercent } from '../utils/common';
+// import { convert, UnitKeys } from '../utils/units'
 
 const AstroGraphic = ({ payload, show }: { payload?: any, show: boolean }) => {
     const time = payload.value
@@ -26,6 +27,7 @@ const getAstroTicks = (dailyData: Array<any>) => {
 
 const WunderXAxis = (dailyData: Array<any>, showLabels: boolean = false) => {
     const ticks = getAstroTicks(dailyData)
+    const height = showLabels ? 20 : 2
     return <XAxis
         orientation="top"
         type="number"
@@ -38,7 +40,7 @@ const WunderXAxis = (dailyData: Array<any>, showLabels: boolean = false) => {
         tickCount={ticks.length}
         tickLine={false}
         interval={0}
-        height={20}
+        height={height}
     />
 }
 
@@ -50,6 +52,7 @@ interface Attribute {
     stroke?: string,
     axis?: string,
     isPercent?: boolean,
+    unitKey: string
     dot?: (props: DotProps) => any
 }
 
@@ -81,9 +84,11 @@ const SubGraph = ({
     domain = [0, 'auto'],
 }: Props) => {
 
+    // const convertValue = (attribute: Attribute) => {}
+
     const renderLine = (attribute: Attribute) => {
         const { dot = false } = attribute
-        const axis = attribute.key === "pressure" && { yAxisId: "right" }
+        const axis = attribute.name === "Pressure" && { yAxisId: "right" }
         const key = attribute.isPercent ? convertToPercent(attribute.key) : attribute.key
         return <Line
             key={attribute.key}

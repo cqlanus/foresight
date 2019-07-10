@@ -2,6 +2,8 @@ import React from 'react'
 import { FaLocationArrow } from 'react-icons/fa'
 import styled from 'styled-components'
 import SubGraph from './SubGraph'
+import { Unit } from 'mathjs';
+import { State, UNITS_MAP } from '../hooks/units'
 
 const GRAPH_TYPE = {
     LINE: "LINE",
@@ -42,7 +44,6 @@ const renderArrow = (props: { index: number, key: string, height: number, cy: nu
         rotate(${windBearing - 45 + 180} 4 4)
         scale(.6)
     `
-    // console.log({ yVal })
     return hasBothXAndY &&
         <FaLocationArrow
             key={key}
@@ -52,35 +53,39 @@ const renderArrow = (props: { index: number, key: string, height: number, cy: nu
             transform={transform} />
 }
 
-const DATA_MAP = {
+const getDataMap = (units: State) => ({
     TEMP: {
-        key: "temperature",
+        key: (d: {temperature: Unit}) => d.temperature.toNumber(units.degrees).toPrecision(3),
         name: "Temperature",
         type: GRAPH_TYPE.LINE,
         color: "indianred",
         axis: AXIS_TYPE.LEFT,
+        unitKey: "degrees",
     },
     DEW: {
-        key: "dewPoint",
+        key: (d: {dewPoint: Unit}) => d.dewPoint.toNumber(units.degrees).toPrecision(3),
         name: "Dewpoint",
         type: GRAPH_TYPE.LINE,
         color: "forestgreen",
         axis: AXIS_TYPE.LEFT,
+        unitKey: "degrees",
     },
     WIND_SPEED: {
-        key: "windSpeed",
+        key: (d: {windSpeed: Unit}) => d.windSpeed.toNumber(units.speed).toPrecision(4),
         name: "Wind speed",
         type: GRAPH_TYPE.LINE,
         color: "darkslateblue",
         axis: AXIS_TYPE.LEFT,
         dot: renderArrow,
+        unitKey: "speed",
     },
     WIND_GUST: {
-        key: "windGust",
+        key: (d: {windGust: Unit}) => d.windGust.toNumber(units.speed).toPrecision(4),
         name: "Wind gust",
         type: GRAPH_TYPE.LINE,
         color: "lightslategrey",
         axis: AXIS_TYPE.LEFT,
+        unitKey: "speed",
     },
     CHANCE_PRECIP: {
         key: "precipProbability",
@@ -90,15 +95,17 @@ const DATA_MAP = {
         stroke: "steelblue",
         isPercent: true,
         axis: AXIS_TYPE.LEFT,
+        unitKey: "percent",
     },
     QTY_PRECIP: {
-        key: "precipIntensity",
+        key: "precipIntensity", /* (d: {precipIntensity: Unit}) => d.precipIntensity.toNumber('mm').toPrecision(3), */
         name: "Qty precip",
         type: GRAPH_TYPE.AREA,
         color: "violet",
         stroke: "darkviolet",
         isPercent: true,
         axis: AXIS_TYPE.LEFT,
+        unitKey: "precip",
     },
     CLOUD_COVER: {
         key: "cloudCover",
@@ -108,6 +115,7 @@ const DATA_MAP = {
         stroke: "grey",
         isPercent: true,
         axis: AXIS_TYPE.LEFT,
+        unitKey: "percent",
     },
     HUMIDITY: {
         key: "humidity",
@@ -116,19 +124,19 @@ const DATA_MAP = {
         color: "limegreen",
         isPercent: true,
         axis: AXIS_TYPE.LEFT,
+        unitKey: "percent",
     },
     PRESSURE: {
-        key: "pressure",
+        key: (d: {pressure: Unit}) => d.pressure.toNumber(units.pressure).toPrecision(5),
         name: "Pressure",
         type: GRAPH_TYPE.LINE,
         color: "black",
         axis: AXIS_TYPE.RIGHT,
+        unitKey: "pressure",
     },
-}
+})
 
-const TEMP_GRAPH = [DATA_MAP.TEMP, DATA_MAP.DEW]
-const SKY_GRAPH = [DATA_MAP.CLOUD_COVER, DATA_MAP.CHANCE_PRECIP, DATA_MAP.QTY_PRECIP, DATA_MAP.HUMIDITY, DATA_MAP.PRESSURE]
-const WIND_GRAPH = [DATA_MAP.WIND_GUST, DATA_MAP.WIND_SPEED]
+
 
 const Container = styled.div`
     height: 100%;
@@ -137,10 +145,16 @@ const Container = styled.div`
 interface Props {
     dailyData: Array<any>
     hourlyData: Array<any>
+    units: State
 }
 
 
-const Graph = ({ dailyData, hourlyData }: Props) => {
+const Graph = ({ dailyData, hourlyData, units }: Props) => {
+    const DATA_MAP = getDataMap(units)
+
+    const TEMP_GRAPH = [DATA_MAP.TEMP, DATA_MAP.DEW]
+    const SKY_GRAPH = [DATA_MAP.CLOUD_COVER, DATA_MAP.CHANCE_PRECIP, DATA_MAP.QTY_PRECIP, DATA_MAP.HUMIDITY, DATA_MAP.PRESSURE]
+    const WIND_GRAPH = [DATA_MAP.WIND_GUST, DATA_MAP.WIND_SPEED]
 
     const renderTemp = () => (
         <SubGraph
@@ -163,7 +177,7 @@ const Graph = ({ dailyData, hourlyData }: Props) => {
         <SubGraph
             data={hourlyData}
             attributes={WIND_GRAPH}
-            domain={[0, 'auto']}
+            domain={[0, 'dataMax + 15']}
             dailyData={dailyData} />
     )
 
