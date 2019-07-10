@@ -65,7 +65,7 @@ class Hour {
     humidity: number
     icon: string
     ozone: number
-    precipIntensity: number
+    precipIntensity: Unit
     precipProbability: number
     pressure: Unit
     summary: string
@@ -83,7 +83,7 @@ class Hour {
         this.humidity = network.humidity
         this.icon = network.icon
         this.ozone = network.ozone
-        this.precipIntensity = /* unit(network.precipIntensity, "mm") */ network.precipIntensity
+        this.precipIntensity = unit((network.precipIntensity * 100), "mm/h")
         this.precipProbability = network.precipProbability
         this.pressure = unit(network.pressure, "millibar")
         this.summary = network.summary

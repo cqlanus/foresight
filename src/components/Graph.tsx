@@ -3,7 +3,7 @@ import { FaLocationArrow } from 'react-icons/fa'
 import styled from 'styled-components'
 import SubGraph from './SubGraph'
 import { Unit } from 'mathjs';
-import { State, UNITS_MAP } from '../hooks/units'
+import { State } from '../hooks/units'
 
 const GRAPH_TYPE = {
     LINE: "LINE",
@@ -98,12 +98,11 @@ const getDataMap = (units: State) => ({
         unitKey: "percent",
     },
     QTY_PRECIP: {
-        key: "precipIntensity", /* (d: {precipIntensity: Unit}) => d.precipIntensity.toNumber('mm').toPrecision(3), */
+        key: (d: {precipIntensity: Unit}) => d.precipIntensity.toNumber(units.precip).toPrecision(3),
         name: "Qty precip",
         type: GRAPH_TYPE.AREA,
         color: "violet",
         stroke: "darkviolet",
-        isPercent: true,
         axis: AXIS_TYPE.LEFT,
         unitKey: "precip",
     },

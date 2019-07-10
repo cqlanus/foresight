@@ -1,3 +1,13 @@
+import { createUnit } from 'mathjs'
+
+createUnit('knot', {definition: '0.514444 m/s', aliases: ['knots', 'kt', 'kts']})
+createUnit('inHg', {
+    definition: '33.8637526 millibar',
+})
+createUnit('hPa', {
+    definition: '1 millibar',
+})
+
 export interface State {
     degrees: string;
     pressure: string;
@@ -31,8 +41,9 @@ export const UNITS_MAP: UnitsMap = {
         key: "pressure",
         name: "Pressure",
         units: {
-            "in": "in",
+            "inHg": "inHg",
             "millibar": "millibar",
+            "hPa": "hPa",
         }
     },
     SPEED: {
@@ -40,7 +51,7 @@ export const UNITS_MAP: UnitsMap = {
         name: "Speed",
         units: {
             "mi/h": "mi/h",
-            "knot": "knot",
+            "knots": "knots",
             "km/h": "km/h",
             "m/s": "m/s",
         }
@@ -49,8 +60,8 @@ export const UNITS_MAP: UnitsMap = {
         key: "precip",
         name: "Precip",
         units: {
-            "in": "in",
-            "mm": "mm",
+            "in/h": "in/h",
+            "mm/h": "mm/h",
         }
     },
 }
@@ -58,7 +69,7 @@ export const UNITS_MAP: UnitsMap = {
 export const initialUnitsState = {
     degrees: UNITS_MAP.DEGREES.units["degF"],
     pressure: UNITS_MAP.PRESSURE.units["millibar"],
-    precip: UNITS_MAP.PRECIP.units["in"],
+    precip: UNITS_MAP.PRECIP.units["mm/h"],
     speed: UNITS_MAP.SPEED.units["mi/h"],
 }
 
