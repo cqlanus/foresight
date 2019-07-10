@@ -116,3 +116,57 @@ export const getForecastData = async () => {
         console.log({ error })
     }
 }
+
+const productUrl = (productId: string) => `https://api.weather.gov/products/${productId}`
+
+const getLatestDiscussionId = async (locationId: string = "LOT") => {
+    try {
+        const url = `https://api.weather.gov/products/types/AFD/locations/${locationId}`
+        const response = await request(url)
+        const [ firstLink = {} ] = response["@graph"]
+        return firstLink.id
+    } catch (error) {
+        console.log({error})
+    }
+}
+
+export type DiscussionObj = { [ key: string ]: Array<string> }
+
+const titlePattern = /\.([A-Za-z\s])*\.\.\./
+const formatTitle = (rawTitle: string) => {
+    const pattern = rawTitle.match(titlePattern) || []
+    return pattern[0].replace(/\./g, "")
+}
+
+const formatDiscussion = (text: string) => {
+    const split = text.split('\n\n').map(t => t.replace(/\n/g, ' ').trim())
+
+    let currentTitle = ""
+    const discussionObject = split.reduce((acc: DiscussionObj, curr: string) => {
+        if (curr[0] === ".") {
+            const title = formatTitle(curr)
+            currentTitle = title
+            acc[title] = []
+        } else {
+            let currentParagraphs = acc[currentTitle]
+            if (currentParagraphs) {
+                acc[currentTitle] = [ ...currentParagraphs, curr ]
+            }
+        }
+        return acc
+    }, {})
+
+    return discussionObject
+}
+
+export const getScentificDiscussion = async (locationId: string = "LOT") => {
+    try {
+        const productId = await getLatestDiscussionId(locationId)
+        const url = productUrl(productId)
+        const discussion = await request(url)
+        const { productText = "" } = discussion || {}
+        return formatDiscussion(productText)
+    } catch (error) {
+        console.log({error})
+    }
+}

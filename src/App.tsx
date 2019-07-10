@@ -9,6 +9,7 @@ import { WiDaySunny, WiMoonWaningCrescent4 } from 'react-icons/wi'
 import Graph from './components/Graph'
 import SevenDayForecast from './components/SevenDayForecast'
 import UnitsModal from './components/UnitsModal'
+import ForecastDiscussionModal from './components/ForecastDiscussionModal'
 import WunderLoader from './components/Loader'
 
 import { getDarkSkyHourlyForecast } from './hooks/nws'
@@ -56,6 +57,7 @@ const App: React.FC = () => {
 
   const getData = async () => {
     try {
+
       setLoading(true)
       const position = await getLocation()
       const darkSkyData = await getDarkSkyHourlyForecast(position)
@@ -98,6 +100,7 @@ const App: React.FC = () => {
           </TopBar>
           <SevenDayForecast dailyData={dailyData} />
           <Graph units={units} dailyData={dailyData} hourlyData={hourlyData} />
+          <ForecastDiscussionModal/>
         </Container>
       <WunderLoader active={loading}/>
     </div>

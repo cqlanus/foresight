@@ -33,7 +33,6 @@ const getMultiple = (width: number) => {
 
 const renderArrow = (props: { index: number, key: string, height: number, cy: number, cx: number, payload: { key: string, windBearing: number } }) => {
     const { payload: { windBearing }, key, cy, cx, height, index } = props
-    const smallWindow = window.innerWidth < 700
     const multiple = getMultiple(window.innerWidth)
     if (index % multiple > 0) { return }
     const hasBothXAndY = cx && cy && windBearing
