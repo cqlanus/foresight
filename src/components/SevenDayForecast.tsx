@@ -2,18 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { getDarkskyTimestamp, formatDate } from '../utils/common'
+import { getMoonPhaseIcon } from '../utils/moon'
+
+import { Day } from '../types/darksky'
 
 import ForecastIcon from './ForecastIcon'
-
-interface Forecast {
-    isDaytime: boolean
-    summary: string
-    icon: string
-    name: string
-    time: number
-    temperatureLow: number
-    temperatureHigh: number
-}
 
 const Container = styled.div`
     display: flex;
@@ -48,6 +41,9 @@ const IconContainer = styled.div`
 
 const Summary = styled.span`
     font-size: 12px;
+    line-height: 1.1em;
+    margin-bottom: 0.5em;
+    min-height: 4.4em;
 
     @media (max-width: 700px) {
         display: none;
@@ -114,7 +110,9 @@ const SevenDayForecast = ({ dailyData }: Props) => {
         )
     }
 
-    const renderDaytimeForecast = () => dailyData.map((f: Forecast, idx: number) => (
+    const renderDaytimeForecast = () => dailyData.map((f: Day, idx: number) => {
+        const MoonIcon = getMoonPhaseIcon(f.moonPhase)
+        return (
         <DayTileContainer key={idx}>
             {formatDate(getDarkskyTimestamp(f.time))}
             {renderTempRow(f.temperatureHigh, f.temperatureLow)}
@@ -125,8 +123,11 @@ const SevenDayForecast = ({ dailyData }: Props) => {
             <Summary>
                 {f.summary}
             </Summary>
+            {MoonIcon && <div style={{fontSize: "22px"}}>
+                <MoonIcon />
+            </div>}
         </DayTileContainer>
-    ))
+    )})
 
     return (
         <Container>

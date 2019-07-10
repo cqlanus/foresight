@@ -74,6 +74,10 @@ interface Props {
     attributes: Array<Attribute>,
     showAstroLabels?: boolean,
     domain?: [AxisDomain, AxisDomain]
+    units: {
+        left: string,
+        right?: string
+    }
 }
 
 const SubGraph = ({
@@ -82,6 +86,7 @@ const SubGraph = ({
     attributes,
     showAstroLabels = false,
     domain = [0, 'auto'],
+    units
 }: Props) => {
 
     // const convertValue = (attribute: Attribute) => {}
@@ -149,6 +154,11 @@ const SubGraph = ({
 
     const astronomyData = getAstronomyData()
 
+    interface Label {
+        value: string | undefined
+        angle: number
+        position: string
+    }
     return (
         <ResponsiveContainer height={"33%"} >
             <ComposedChart syncId="weather" data={data}>
@@ -158,8 +168,8 @@ const SubGraph = ({
                 <Tooltip labelFormatter={labelFormatter} contentStyle={tooltipStyle} formatter={tooltipFormatter} separator={" "} />
                 {WunderXAxis(astronomyData, showAstroLabels)}
 
-                <YAxis tick={{ fontSize: "10px" }} domain={domain} />
-                <YAxis tick={{ fontSize: "10px" }} orientation="right" yAxisId="right" domain={["dataMin - 10", "dataMax + 10"]} />
+                <YAxis tick={{ fontSize: "10px" }} label={{value: units.left, angle: -90, position: 'insideLeft'}} domain={domain} />
+                <YAxis tick={{ fontSize: "10px" }} label={{value: units.right, angle: 90, position: 'insideRight'}} orientation="right" yAxisId="right" domain={["dataMin - 10", "dataMax + 10"]} />
                 <Legend verticalAlign="bottom" height={36} />
             </ComposedChart>
         </ResponsiveContainer>

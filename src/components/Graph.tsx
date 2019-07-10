@@ -160,6 +160,7 @@ const Graph = ({ dailyData, hourlyData, units }: Props) => {
             attributes={TEMP_GRAPH}
             dailyData={dailyData}
             domain={["dataMin - 10", "dataMax + 10"]}
+            units={{ left: units.degrees }}
             showAstroLabels />
     )
 
@@ -168,6 +169,7 @@ const Graph = ({ dailyData, hourlyData, units }: Props) => {
             data={hourlyData}
             attributes={SKY_GRAPH}
             domain={[0, 'auto']}
+            units={{left: "%", right: units.pressure }}
             dailyData={dailyData} />
     )
 
@@ -176,6 +178,7 @@ const Graph = ({ dailyData, hourlyData, units }: Props) => {
             data={hourlyData}
             attributes={WIND_GRAPH}
             domain={[0, 'dataMax + 15']}
+            units={{left: units.speed }}
             dailyData={dailyData} />
     )
 

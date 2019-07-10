@@ -10,7 +10,7 @@ import Graph from './components/Graph'
 import SevenDayForecast from './components/SevenDayForecast'
 import UnitsModal from './components/UnitsModal'
 import ForecastDiscussionModal from './components/ForecastDiscussionModal'
-import WunderLoader from './components/Loader'
+import Loader from './components/Loader'
 
 import { getDarkSkyHourlyForecast } from './hooks/nws'
 import { initialUnitsState, unitsReducer, UNITS_MAP, State } from './hooks/units'
@@ -102,7 +102,7 @@ const App: React.FC = () => {
           <Graph units={units} dailyData={dailyData} hourlyData={hourlyData} />
           <ForecastDiscussionModal/>
         </Container>
-      <WunderLoader active={loading}/>
+      <Loader active={loading}/>
     </div>
   );
 }

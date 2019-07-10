@@ -100,7 +100,7 @@ class Hour {
     }
 }
 
-class Day {
+export class Day {
     apparentTemperature: number
     cloudCover: number
     dewPoint: number

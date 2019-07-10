@@ -4,6 +4,8 @@ import styled from 'styled-components'
 
 import { getScentificDiscussion } from '../hooks/nws'
 
+import Loader from '../components/Loader'
+
 const DiscussionContainer = styled.div`
     margin-bottom: 1em;
     display: flex;
@@ -14,7 +16,7 @@ const DiscussionContainer = styled.div`
 
 const DiscussionParagraph = styled.p`
     font-size: 1.2em;
-    line-height: 1.1em;
+    line-height: 1.5em;
     max-width: 60ch;
 
 `
@@ -34,28 +36,32 @@ interface DiscussionMap {
 const DISCUSSION_MAP: DiscussionMap = {
     shortTerm: "SHORT TERM",
     longTerm: "LONG TERM",
+    aviation: "AVIATION"
 }
 
 const ForecastDiscussionModal = () => {
 
     const intitialState: ForecastDiscussion = {}
     const [discussion, setDiscussion] = useState(intitialState)
+    const [ loading, setLoading ] = useState(false)
+    
     const getData = async () => {
         if (Object.keys(discussion).length > 0) {
             return discussion
         }
         try {
+            setLoading(true)
             const response = await getScentificDiscussion()
             setDiscussion(response || {})
         } catch (error) {
             console.log({ error })
         }
+        setLoading(false)
     }
 
     const ModalButton = <Button onClick={getData} fluid>Get Scientific Discussion</Button>
 
     const renderDiscussion = (paragraphs: Array<string>, key: string) => {
-        console.log({ paragraphs })
         return (
             <DiscussionContainer key={key}>
                 <h3>{key}</h3>
@@ -70,7 +76,6 @@ const ForecastDiscussionModal = () => {
     const discussionKeys: Array<DiscussionKeys> = Object.values(DISCUSSION_MAP)
     const hasDiscussion = (Object.keys(discussion).length > 0)
 
-    console.log({ discussion })
     return (
         <Modal trigger={ModalButton}>
             <Modal.Header>Scientific Discussion</Modal.Header>
@@ -82,6 +87,7 @@ const ForecastDiscussionModal = () => {
                     })
                 }
             </Modal.Content>
+            <Loader active={loading}/>
         </Modal>
     )
 }
