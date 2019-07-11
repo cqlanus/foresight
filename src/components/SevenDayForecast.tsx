@@ -57,6 +57,7 @@ const TempContainer = styled.div`
     justify-content: center;
     font-size: 14px;
     font-weight: bold;
+    margin: 0.5em 0;
 
     @media (max-width: 700px) {
         flex-direction: column;
@@ -65,7 +66,7 @@ const TempContainer = styled.div`
 `
 
 const P = styled.p`
-    margin: 0.5em 0;
+    margin: 0;
 `
 
 const HiTemp = styled(P)`

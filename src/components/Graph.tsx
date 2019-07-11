@@ -138,6 +138,7 @@ const getDataMap = (units: State) => ({
 
 const Container = styled.div`
     height: 100%;
+    padding: 0 0.5em;
     /* min-width: 500px; */
 `
 interface Props {

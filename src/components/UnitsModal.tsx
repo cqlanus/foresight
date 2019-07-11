@@ -18,7 +18,7 @@ const ButtonGroup = styled.div`
     padding: 1em 0;
 `
 
-const ModalButton = <Button fluid>Customize</Button>
+const ModalButton = <Button fluid color="grey">Customize</Button>
 
 interface Props {
     selectedUnits: State
