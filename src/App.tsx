@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import 'semantic-ui-css/semantic.min.css'
 import "react-toggle/style.css"
+import 'ol/ol.css';
 import './App.css';
 import styled from 'styled-components'
 import Toggle from 'react-toggle'
@@ -12,6 +13,7 @@ import UnitsModal from './components/UnitsModal'
 import ForecastDiscussionModal from './components/ForecastDiscussionModal'
 import Loader from './components/Loader'
 import SearchInput from './components/SearchInput'
+import ForecastMap from './components/ForecastMap'
 
 import { getDarkSkyHourlyForecast } from './hooks/nws'
 import { initialUnitsState, unitsReducer, UNITS_MAP, State } from './hooks/units'
@@ -43,6 +45,11 @@ const ToggleContainer = styled.div`
     margin: 0 1em;
 `
 
+// const MapContainer = styled.div`
+//     height: 400px;
+//     width: 100%;
+// `
+
 const App: React.FC = () => {
     const [units, dispatch] = useReducer(unitsReducer, initialUnitsState)
 
@@ -56,6 +63,7 @@ const App: React.FC = () => {
     const [forecast, setForecast] = useState(initial)
     const [ loading, setLoading ] = useState(false)
     const [ isDarkMode, setDarkMode ] = useState(false)
+    const [ location, setLocation ] = useState(initial)
 
     const toggleDarkMode = () => setDarkMode(!isDarkMode)
 
@@ -63,6 +71,7 @@ const App: React.FC = () => {
         try {
             setLoading(true)
             const position = await getLocation()
+            setLocation(position)
             const darkSkyData = await getDarkSkyHourlyForecast(position)
             console.log({ darkSkyData })
 
@@ -90,6 +99,7 @@ const App: React.FC = () => {
         try {
             setLoading(true)
             const position = await getCoordinates(searchTerm)
+            setLocation(position)
             const darkSkyData = await getDarkSkyHourlyForecast(position)
             setForecast(darkSkyData)
         } catch (error) {
@@ -131,6 +141,7 @@ const App: React.FC = () => {
                 {renderTopBar()}
                 <SevenDayForecast dailyData={dailyData} />
                 <Graph units={units} dailyData={dailyData} hourlyData={hourlyData} />
+                    <ForecastMap coords={location.coords}/>
                 {renderBottomBar()}
             </Container>
           <Loader active={loading}/>

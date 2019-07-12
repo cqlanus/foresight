@@ -15,6 +15,5 @@ export const getCoordinates = async (searchTerm: string = "Chicago") => {
     const { center = [] } = firstFeature
     const [ longitude, latitude ] = center
 
-    console.log({latitude, longitude})
     return { coords: { latitude, longitude }}
 }
