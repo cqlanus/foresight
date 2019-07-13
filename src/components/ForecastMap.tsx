@@ -20,14 +20,15 @@ const defaultCoords = {
 
 const ForecastMap = ({ coords = defaultCoords }: MapProps) => {
 
-    console.log({coords})
     const MAP_ID = "map"
 
     const initial: Partial<Map> = {}
     const [ map, setMap ] = useState(initial)
+
+    const hasMap = Object.keys(map).length > 0
     
     useEffect(() => {
-        if (Object.keys(map).length > 0) { 
+        if (hasMap) { 
             setNewView(map, coords)
          } else {
              const m = createMap(coords)
@@ -35,25 +36,9 @@ const ForecastMap = ({ coords = defaultCoords }: MapProps) => {
      
              setMap(m)
          }
-    }, [coords])
+    }, [coords, map, hasMap])
     
-    return (
-        // <StyledMap center={[latitude, longitude]} zoom={zoom} >
-        //     <TileLayer
-        //     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a>'
-        //     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        //     />
-        //     {/* <WMSTileLayer
-        //     layers={"17"}
-        //     url="https://nowcoast.noaa.gov/arcgis/services/nowcoast/analysis_meteohydro_sfc_rtma_time/MapServer/WMSServer"
-        //     transparent={true}
-        //     version={"1.3.0"}
-        //     format={"image/png"}
-        //     /> */}
-            
-        // </StyledMap>
-        <StyledMap id={MAP_ID} />
-        )
+    return <StyledMap id={MAP_ID} />
 }
 
 export default ForecastMap

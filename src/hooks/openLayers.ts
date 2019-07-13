@@ -30,13 +30,12 @@ export const createMap = (coords: Coords) => {
         //   source: new TileArcGISRest({ urls: [url] })
         // })
     ]
-    const view = createNewView(coords)
     return new Map({
         layers,
         view: new View({
             projection: "EPSG:102100",
             center: getCenter(extent),
-          zoom: 8
+          zoom: 9
         })
     });
 }
@@ -47,7 +46,7 @@ const createNewView = ({latitude, longitude}: Coords) => {
     const newView = new View({
         projection: "EPSG:102100",
         center,
-      zoom: 8
+      zoom: 9
     })
     return newView
 }

@@ -14,6 +14,7 @@ import ForecastDiscussionModal from './components/ForecastDiscussionModal'
 import Loader from './components/Loader'
 import SearchInput from './components/SearchInput'
 import ForecastMap from './components/ForecastMap'
+import CurrentConditions from './components/CurrentConditions'
 
 import { getDarkSkyHourlyForecast } from './hooks/nws'
 import { initialUnitsState, unitsReducer, UNITS_MAP, State } from './hooks/units'
@@ -60,7 +61,7 @@ const App: React.FC = () => {
         }
     }
     const initial: any = {}
-    const [forecast, setForecast] = useState(initial)
+    const [ forecast, setForecast ] = useState(initial)
     const [ loading, setLoading ] = useState(false)
     const [ isDarkMode, setDarkMode ] = useState(false)
     const [ location, setLocation ] = useState(initial)
@@ -72,7 +73,7 @@ const App: React.FC = () => {
             setLoading(true)
             const position = await getLocation()
             setLocation(position)
-            const darkSkyData = await getDarkSkyHourlyForecast(position)
+            const darkSkyData = await getDarkSkyHourlyForecast()
             console.log({ darkSkyData })
 
             setForecast(darkSkyData)
@@ -87,7 +88,7 @@ const App: React.FC = () => {
     }, [])
 
 
-    const { daily = {}, hourly = {} } = forecast
+    const { daily = {}, hourly = {}, currently = {} } = forecast
     const { data: dailyData = [] } = daily
     const { data: hourlyData = [] } = hourly
 
@@ -139,6 +140,7 @@ const App: React.FC = () => {
         <div className="App">
             <Container isDarkMode={isDarkMode}>
                 {renderTopBar()}
+                <CurrentConditions currentlyData={currently} />
                 <SevenDayForecast dailyData={dailyData} />
                 <Graph units={units} dailyData={dailyData} hourlyData={hourlyData} />
                     <ForecastMap coords={location.coords}/>

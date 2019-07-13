@@ -46,6 +46,28 @@ export interface DarkSkyDay {
     precipType: string
 }
 
+interface DarkSkyCurrent {
+    time: number
+    summary: string
+    icon: string
+    nearestStormDistance: number
+    nearestStormBearing: number
+    precipIntensity: number
+    precipProbability: number
+    temperature: number
+    apparentTemperature: number
+    dewPoint: number
+    humidity: number
+    pressure: number
+    windSpeed: number
+    windGust: number
+    windBearing: number
+    cloudCover: number
+    uvIndex: number
+    visibility: number
+    ozone: number
+}
+
 export interface DarkSkyResponse {
     daily: {
         data: Array<DarkSkyDay>
@@ -53,13 +75,14 @@ export interface DarkSkyResponse {
     hourly: {
         data: Array<DarkSkyHour>
     },
+    currently: DarkSkyCurrent
     timezone: string
     latitude: number
     longitude: number
 }
 
 class Hour {
-    apparentTemperature: number
+    apparentTemperature: Unit
     cloudCover: number
     dewPoint: Unit
     humidity: number
@@ -77,7 +100,7 @@ class Hour {
     windSpeed: Unit
 
     constructor (network: DarkSkyHour) {
-        this.apparentTemperature = network.apparentTemperature
+        this.apparentTemperature = unit(network.apparentTemperature, "degF")
         this.cloudCover = network.cloudCover
         this.dewPoint = unit(network.dewPoint, "degF")
         this.humidity = network.humidity
@@ -158,6 +181,54 @@ export class Day {
     }
 }
 
+export class Current {
+    time: number
+    summary: string
+    icon: string
+    nearestStormDistance: number
+    nearestStormBearing: number
+    precipIntensity: number
+    precipProbability: number
+    temperature: number
+    apparentTemperature: number
+    dewPoint: number
+    humidity: number
+    pressure: number
+    windSpeed: number
+    windGust: number
+    windBearing: number
+    cloudCover: number
+    uvIndex: number
+    visibility: number
+    ozone: number
+
+    constructor (network: DarkSkyCurrent) {
+        this.time = network.time
+        this.summary = network.summary
+        this.icon = network.icon
+        this.nearestStormDistance = network.nearestStormDistance
+        this.nearestStormBearing = network.nearestStormBearing
+        this.precipIntensity = network.precipIntensity
+        this.precipProbability = network.precipProbability
+        this.temperature = network.temperature
+        this.apparentTemperature = network.apparentTemperature
+        this.dewPoint = network.dewPoint
+        this.humidity = network.humidity
+        this.pressure = network.pressure
+        this.windSpeed = network.windSpeed
+        this.windGust = network.windGust
+        this.windBearing = network.windBearing
+        this.cloudCover = network.cloudCover
+        this.uvIndex = network.uvIndex
+        this.visibility = network.visibility
+        this.ozone = network.ozone
+    }
+
+    static of (network: DarkSkyCurrent) {
+        return new Current(network)
+    }
+}
+
 export class DarkSky {
     daily: {
         data: Array<Day>
@@ -165,6 +236,7 @@ export class DarkSky {
     hourly: {
         data: Array<Hour>
     }
+    currently: Current
     timezone: string
     latitude: number
     longitude: number
@@ -172,6 +244,7 @@ export class DarkSky {
     constructor(network: DarkSkyResponse) {
         this.daily = {...network.daily, data: network.daily.data.map(Day.of)}
         this.hourly = {...network.hourly, data: network.hourly.data.map(Hour.of)}
+        this.currently = Current.of(network.currently)
         this.timezone = network.timezone
         this.latitude = network.latitude
         this.longitude = network.longitude

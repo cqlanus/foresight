@@ -27,7 +27,7 @@ interface Props {
     icon: keyof IconMap;
 }
 
-const ForecastIcon = ({ icon }: Props) => {
+const ForecastIcon = ({ icon = "default" }: Props) => {
     const IconComponent = ICON_MAP[icon]
     return <IconComponent />
 }

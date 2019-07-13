@@ -61,6 +61,14 @@ const getDataMap = (units: State) => ({
         axis: AXIS_TYPE.LEFT,
         unitKey: "degrees",
     },
+    FEELS_LIKE: {
+        key: (d: {apparentTemperature: Unit}) => d.apparentTemperature.toNumber(units.degrees).toPrecision(3),
+        name: "Feels like",
+        type: GRAPH_TYPE.LINE,
+        color: "darkslategrey",
+        axis: AXIS_TYPE.LEFT,
+        unitKey: "degrees",
+    },
     DEW: {
         key: (d: {dewPoint: Unit}) => d.dewPoint.toNumber(units.degrees).toPrecision(3),
         name: "Dewpoint",
@@ -151,7 +159,7 @@ interface Props {
 const Graph = ({ dailyData, hourlyData, units }: Props) => {
     const DATA_MAP = getDataMap(units)
 
-    const TEMP_GRAPH = [DATA_MAP.TEMP, DATA_MAP.DEW]
+    const TEMP_GRAPH = [DATA_MAP.FEELS_LIKE, DATA_MAP.TEMP, DATA_MAP.DEW, ]
     const SKY_GRAPH = [DATA_MAP.CLOUD_COVER, DATA_MAP.CHANCE_PRECIP, DATA_MAP.QTY_PRECIP, DATA_MAP.HUMIDITY, DATA_MAP.PRESSURE]
     const WIND_GRAPH = [DATA_MAP.WIND_GUST, DATA_MAP.WIND_SPEED]
 
