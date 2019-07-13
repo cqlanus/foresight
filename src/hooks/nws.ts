@@ -1,8 +1,8 @@
 import { GridDataProperties } from "../types/nws"
 import { FORECAST_LINKS } from "../constants/nws"
 import { request } from "../utils/common"
-import darkSkyData from "../constants/darksky.json"
 import { DarkSky } from '../types/darksky'
+import API from '../api'
 
 const lat = "41.8781"
 const lng = "-87.6298"
@@ -93,19 +93,8 @@ const getAllGridData = async () => {
 }
 
 export const getDarkSkyHourlyForecast = async (position?: any): Promise<DarkSky> => {
-    // const { coords: { latitude, longitude } } = position
-    // const url = `https://localhost:5000/forecast?latitude=${latitude}&longitude=${longitude}`
-    // const headers = {
-    //     "Access-Control-Allow-Origin": "https://localhost:3000/",
-    //     "Access-Control-Allow-Credential": true,
-    // }
-    // const params = {
-    //     credentials: "omit",
-    //     headers,
-    // }
-    // const response = await request(url, params)
-    // return new DarkSky(response)
-    return await new DarkSky(darkSkyData)
+    return await API.getForecast(position)
+    // return await new DarkSky(darkSkyData)
 }
 
 export const getForecastData = async () => {

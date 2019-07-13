@@ -73,7 +73,7 @@ const App: React.FC = () => {
             setLoading(true)
             const position = await getLocation()
             setLocation(position)
-            const darkSkyData = await getDarkSkyHourlyForecast()
+            const darkSkyData = await getDarkSkyHourlyForecast(position)
             console.log({ darkSkyData })
 
             setForecast(darkSkyData)
