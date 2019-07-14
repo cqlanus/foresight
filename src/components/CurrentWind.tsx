@@ -7,6 +7,8 @@ interface Props {
     windGust: number
 }
 
+const Main = styled.div``
+
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -28,6 +30,11 @@ border: .2em solid black;
 border-radius: 50%;
 height: 6rem;
 width: 6rem;
+
+@media (max-width: 500px) {
+    height: 5rem;
+    width: 5rem;
+}
 `
 
 const Triangle = styled.div`
@@ -38,6 +45,13 @@ const Triangle = styled.div`
     border-top: 1.5rem solid black;
     position: absolute;
     top: 0.5rem;
+
+    @media (max-width: 500px) {
+        border-left: .3rem solid transparent;
+        border-right: .3rem solid transparent;
+        border-top: 1rem solid black;
+        top: 1rem;
+    }
 `
 
 const TextContainer = styled.div`
@@ -59,7 +73,7 @@ const Grid = styled.div`
     display: grid;
 `
 
-const WindCompass = ({windSpeed,  windGust, windBearing = 0}: Props) => {
+const WindCompass = ({windSpeed = 0,  windGust = 0, windBearing = 0}: Props) => {
     return (
         <Container windSpeed={windSpeed} windGust={windGust} windBearing={windBearing}>
             <Triangle/>
@@ -68,14 +82,19 @@ const WindCompass = ({windSpeed,  windGust, windBearing = 0}: Props) => {
     )
 }
 
-const CurrentWind = ({windSpeed,  windGust, windBearing = 0}: Props) => {
+const CurrentWind = ({windSpeed = 0,  windGust = 0, windBearing = 0}: Props) => {
     return (
-        <Grid>
-            <WindCompass windSpeed={windSpeed} windGust={windGust} windBearing={windBearing}/>
+        <Main>
+            <Grid>
+                <WindCompass windSpeed={windSpeed} windGust={windGust} windBearing={windBearing}/>
+                <TextContainer>
+                    <Text>{`${Math.round(windSpeed)} mph`}</Text>
+                </TextContainer>
+            </Grid>
             <TextContainer>
-                <Text>{`${Math.round(windSpeed)} mph`}</Text>
+                <Text>{`Gusts ${Math.round(windGust)} mph`}</Text>
             </TextContainer>
-        </Grid>
+        </Main>
     )
 }
 

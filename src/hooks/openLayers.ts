@@ -1,10 +1,11 @@
-import {Map, View} from 'ol';
-import TileLayer from 'ol/layer/Tile';
+import {Map, View} from 'ol'
+import TileLayer from 'ol/layer/Tile'
 // import TileArcGISRest from 'ol/source/TileArcGISRest'
 import TileWMS from 'ol/source/TileWMS'
 import { transform, transformExtent } from 'ol/proj'
-import OSM from 'ol/source/OSM';
-import { getCenter } from 'ol/extent';
+import OSM from 'ol/source/OSM'
+import { getCenter } from 'ol/extent'
+import { defaults, PinchZoom, Interaction } from 'ol/interaction'
 
 type Coords = {latitude: number, longitude: number }
 export const createMap = (coords: Coords) => {
@@ -32,6 +33,9 @@ export const createMap = (coords: Coords) => {
     ]
     return new Map({
         layers,
+        interactions: defaults({
+          mouseWheelZoom: false
+        }),
         view: new View({
             projection: "EPSG:102100",
             center: getCenter(extent),

@@ -34,7 +34,6 @@ const Container = styled.div`
 const TopBar = styled.div`
     display: flex;
     align-items: center;
-    /* background-color: #e0e1e2; */
 
 `
 

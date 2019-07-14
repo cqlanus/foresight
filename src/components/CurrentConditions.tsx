@@ -6,84 +6,91 @@ import { Current } from '../types/darksky'
 import CurrentTemperature from './CurrentTemperature'
 import ForecastIcon from './ForecastIcon'
 import CurrentWind from './CurrentWind'
+import CurrentPrecip from './CurrentPrecip'
+import CurrentDetail from './CurrentDetail'
 
 interface Props {
     currentlyData: Current
 }
 
-const Container = styled.div`
+const Grid = styled.div`
     display: grid;
-    grid-template-areas:
-        "temp icon wind precip sun";
     min-height: 8em;
-    margin: 1em;
-    border: 1px solid rgba(0,0,0,0.2);
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-    border-radius: 1em;
-    padding: 2rem 0;
-
-    @media (max-width: 700px) {
-        grid-template-areas:
-            "temp temp icon icon"
-            "temp temp icon icon"
-            "wind wind precip sun"
-            "wind wind precip sun";
-    }
+    /* margin: 1em; */
+    grid-template-areas: 
+        "main"
+        "details";
 `
 
 const ItemContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0 1rem;
 `
 
-const TempContainer = styled(ItemContainer)`
-    grid-area: temp;
+const DetailsContainer = styled(ItemContainer)`
+    background-color: #e0e1e2;
+    padding: 1rem;
+    flex-wrap: wrap;
+`
+
+const MainContainer = styled(ItemContainer)`
+    grid-area: main;
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
 `
 
 const IconContainer = styled(ItemContainer)`
     grid-area: icon;
     flex-direction: column;
+    justify-content: center;
     font-size: 6em;
+    color: rgba(0,0,0,0.6);
+    @media (max-width: 500px) {
+        font-size: 4em;
+        
+    }
 `
 
 const TextContainer = styled.div`
     font-size: 1rem;
 `
 
-const WindContainer = styled(ItemContainer)`
-    grid-area: wind;
-`
-
-const PrecipContainer = styled(ItemContainer)`
-    grid-area: precip;
-    background-color: darkgreen;
-`
-
 const CurrentConditions = ({currentlyData}: Props) => {
     console.log({currentlyData})
-    const { temperature, apparentTemperature, windSpeed, windBearing, windGust, precipProbability, icon, summary } = currentlyData
+    const { temperature, apparentTemperature, windSpeed, windBearing, windGust, precipProbability, 
+        precipIntensity, nearestStormBearing, nearestStormDistance, icon, summary, humidity, uvIndex, dewPoint, pressure, visibility } = currentlyData
     return (
-        <Container>
-            <TempContainer>
+        <Grid>
+            <DetailsContainer>
+                <CurrentDetail title={'Humidity'} detail={humidity * 100} units={'%'}/>
+                <CurrentDetail title={'Dew Point'} detail={dewPoint} units={"°"}/>
+                <CurrentDetail title={'Pressure'} detail={pressure} units={'mb'}/>
+                <CurrentDetail title={'Visibility'} detail={visibility} units={'mi'}/>
+                <CurrentDetail title={'UV Index'} detail={uvIndex} units={''}/>
+            </DetailsContainer>
+            <MainContainer>
                 <CurrentTemperature 
                     apparentTemperature={apparentTemperature}
                     temperature={temperature} />
-            </TempContainer>
-            <IconContainer>
-                <ForecastIcon icon={icon}/>
-                <TextContainer>
-                    <p>{summary}</p>
-                </TextContainer>
-            </IconContainer>
-            <PrecipContainer>{precipProbability}</PrecipContainer>
-            <WindContainer>
-                <CurrentWind 
-                    windSpeed={windSpeed} 
+                <IconContainer>
+                    <ForecastIcon icon={icon} />
+                    <TextContainer>{summary}</TextContainer>
+                </IconContainer>
+                <CurrentPrecip
+                    nearestStormBearing={nearestStormBearing}
+                    nearestStormDistance={nearestStormDistance} 
+                    precipIntensity={precipIntensity} 
+                    precipProbability={precipProbability}
+                 />
+                 <CurrentWind 
                     windBearing={windBearing} 
-                    windGust={windGust} />
-            </WindContainer>
-        </Container>
+                    windGust={windGust} 
+                    windSpeed={windSpeed} />
+            </MainContainer>
+        </Grid>
     )
 }
 
