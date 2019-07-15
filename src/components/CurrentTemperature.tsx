@@ -1,5 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
+import { scaleLinear } from 'd3-scale'
+import { interpolateRgbBasis } from 'd3-interpolate'
 
 interface Props {
     temperature: number
@@ -13,7 +15,9 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: .3em solid indianred;
+    border-width: .3em;
+    border-style: solid;
+    border-color: ${props => props.color};
     border-radius: 50%;
     height: 8rem;
     width: 8rem;
@@ -31,6 +35,7 @@ const Temp = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    color: ${props => props.color};
     
     @media (max-width: 600px) {
         font-size: 1.5em;
@@ -43,16 +48,33 @@ const ApparentTemp = styled.div`
     }
 `
 
+const ApparentTempText = styled.span`
+    color: ${p => p.color};
+    font-weight: bold;
+`
+
 const DEGREES = "°"
 
 const CurrentTemperature = ({temperature = 0, apparentTemperature = 0}: Props) => {
+
+    const scale = scaleLinear().domain([0, 100])
+    const tempNumber = scale(temperature)
+    const apparentTempNumber = scale(apparentTemperature)
+    const interpolator = interpolateRgbBasis(['blue', 'green', 'goldenrod', 'red'])
+    const tempColor = interpolator(tempNumber)
+
+    const apparentTempColor = interpolator(apparentTempNumber)
     
     return (
         <Main>
-            <Container>
-                <Temp>{`${Math.round(temperature)}${DEGREES}`}</Temp>
+            <Container color={tempColor}>
+                <Temp color={tempColor}>{`${Math.round(temperature)}${DEGREES}`}</Temp>
             </Container>
-            <ApparentTemp>{`FEELS LIKE ${Math.round(apparentTemperature)}${DEGREES}`}</ApparentTemp>
+            <ApparentTemp>
+                {'FEELS LIKE '}
+                <ApparentTempText color={apparentTempColor}>{`${Math.round(apparentTemperature)}${DEGREES}`}</ApparentTempText>
+
+            </ApparentTemp>
         </Main>
     )
 }

@@ -5,7 +5,7 @@ import TileWMS from 'ol/source/TileWMS'
 import { transform, transformExtent } from 'ol/proj'
 import OSM from 'ol/source/OSM'
 import { getCenter } from 'ol/extent'
-import { defaults, PinchZoom, Interaction } from 'ol/interaction'
+import { defaults } from 'ol/interaction'
 
 type Coords = {latitude: number, longitude: number }
 export const createMap = (coords: Coords) => {

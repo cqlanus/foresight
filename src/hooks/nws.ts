@@ -94,7 +94,6 @@ const getAllGridData = async () => {
 
 export const getDarkSkyHourlyForecast = async (position?: any): Promise<DarkSky> => {
     return await API.getForecast(position)
-    // return await new DarkSky(darkSkyData)
 }
 
 export const getForecastData = async () => {
