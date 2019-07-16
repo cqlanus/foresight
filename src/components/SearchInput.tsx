@@ -1,22 +1,49 @@
-import React, { useState } from 'react'
-import { Input, InputOnChangeData, Form } from 'semantic-ui-react'
+import React, { useState, useEffect } from 'react'
+import { Input, InputOnChangeData, Form, Button, Icon } from 'semantic-ui-react'
+import { FaLocationArrow } from 'react-icons/fa'
+import styled from 'styled-components'
+import { Feature } from '../api';
+
+const FormContainer = styled(Form)`
+    display: flex;
+`
+
+const StyledInput = styled(Input)`
+    flex: 1;
+`
 
 interface Props {
-    onSubmit: (term: string) => void
+    onSubmit: (term: string) => void,
+    relocalize: () => void,
+    place: Partial<Feature>
 }
 
-const SearchInput = ({ onSubmit }: Props) => {
+
+
+const SearchInput = ({ onSubmit, relocalize, place = {} }: Props) => {
+
 
     const [ searchTerm, setSearchTerm ] = useState("")
+
+    useEffect(() => {
+        if (place.text && searchTerm !== place.text) {
+            setSearchTerm(place.text)
+        }
+    }, [place])
     
     const handleChange = (e: React.ChangeEvent, data: InputOnChangeData) => setSearchTerm(data.value)
     
-    const handleClick = () => onSubmit(searchTerm)
+    const handleClick = () => {
+        onSubmit(searchTerm)
+    }
     
     return (
-        <Form onSubmit={handleClick}>
-            <Input onChange={handleChange} fluid action={{ icon: 'search' }} placeholder='Search...' />
-        </Form>
+        <FormContainer onSubmit={handleClick}>
+                <Button onClick={relocalize} icon="location arrow" />
+                <StyledInput value={searchTerm} placeholder="Search..." onChange={handleChange} />
+                <Button icon="search" />
+        </FormContainer>
+            
     )
 }
 

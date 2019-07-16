@@ -106,7 +106,7 @@ const CurrentConditions = ({currentlyData}: Props) => {
                         title={'UV Index'} 
                         detail={uvIndex} 
                         units={''} 
-                        sigfigs={1} 
+                        sigfigs={2} 
                         background={uvColor} />
                 </DetailsContainer>
                 <MainContainer>
