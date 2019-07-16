@@ -1,7 +1,7 @@
-import React, { useEffect, useState  } from 'react'
-import {Map} from 'ol';
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { createMap, setNewView } from '../hooks/openLayers'
+import MapManager from '../hooks/openLayers'
+import { Button } from 'semantic-ui-react'
 
 const StyledMap = styled.div`
     height: 400px;
@@ -9,36 +9,49 @@ const StyledMap = styled.div`
 
 interface MapProps {
     coords: {
-        latitude: number,
+        latitude: number
         longitude: number
-    },
+    }
 }
 const defaultCoords = {
     latitude: 41.8781,
-    longitude: -87.6298
+    longitude: -87.6298,
 }
 
 const ForecastMap = ({ coords = defaultCoords }: MapProps) => {
+    const MAP_ID = 'map'
 
-    const MAP_ID = "map"
-
-    const initial: Partial<Map> = {}
-    const [ map, setMap ] = useState(initial)
-
-    const hasMap = Object.keys(map).length > 0
+    const initialManager: Partial<MapManager> = {}
+    const [manager, setManager] = useState(initialManager)
+    const handlePlay = () => manager.play && manager.play()
+    const handlePause = () => manager.stop && manager.stop()
     
     useEffect(() => {
-        if (hasMap) { 
-            setNewView(map, coords)
-         } else {
-             const m = createMap(coords)
-             m.setTarget(MAP_ID)
-     
-             setMap(m)
-         }
-    }, [coords, map, hasMap])
+        const hasMap =
+            manager.getMap && Object.keys(manager.getMap()).length > 0
+        if (hasMap) {
+            manager.setView && manager.setView(coords)
+        } else {
+            const manager = new MapManager(coords)
+            manager.getMap().setTarget(MAP_ID)
+
+            setManager(manager)
+        }
+    }, [coords, handlePlay, manager])
+
     
-    return <StyledMap id={MAP_ID} />
+
+    return (
+        <div>
+            <Button
+icon="play"
+onClick={handlePlay} />
+            <Button
+icon="pause"
+onClick={handlePause} />
+            <StyledMap id={MAP_ID} />
+        </div>
+    )
 }
 
 export default ForecastMap
