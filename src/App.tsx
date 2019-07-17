@@ -18,7 +18,7 @@ import CurrentConditions from './components/CurrentConditions'
 
 import { getDarkSkyHourlyForecast } from './hooks/nws'
 import { initialUnitsState, unitsReducer, UNITS_MAP, State } from './hooks/units'
-import { getLocation, getCoordinates } from './hooks/location'
+import { getLocation, getCoordinates, getPlace } from './hooks/location'
 
 interface ContainerProps {
     isDarkMode: boolean
@@ -64,6 +64,7 @@ const App: React.FC = () => {
     const [ loading, setLoading ] = useState(false)
     const [ isDarkMode, setDarkMode ] = useState(false)
     const [ location, setLocation ] = useState(initial)
+    const [ place, setPlace ] = useState(initial)
 
     const toggleDarkMode = () => setDarkMode(!isDarkMode)
 
@@ -72,8 +73,9 @@ const App: React.FC = () => {
             setLoading(true)
             const position = await getLocation()
             setLocation(position)
+            const placeObject = await getPlace(position.coords)
+            setPlace(placeObject)
             const darkSkyData = await getDarkSkyHourlyForecast(position)
-            console.log({ darkSkyData })
 
             setForecast(darkSkyData)
         } catch (error) {
@@ -100,6 +102,8 @@ const App: React.FC = () => {
             setLoading(true)
             const position = await getCoordinates(searchTerm)
             setLocation(position)
+            const placeObject = await getPlace(position.coords)
+            setPlace(placeObject)
             const darkSkyData = await getDarkSkyHourlyForecast(position)
             setForecast(darkSkyData)
         } catch (error) {
@@ -121,7 +125,7 @@ const App: React.FC = () => {
                 defaultChecked={isDarkMode} />
           </ToggleContainer>
           <SearchContainer>
-              <SearchInput onSubmit={handleSearch} />
+              <SearchInput place={place} relocalize={getData} onSubmit={handleSearch} />
           </SearchContainer>
 
       </TopBar>

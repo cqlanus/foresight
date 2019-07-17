@@ -95,6 +95,10 @@ const Separator = styled.span`
     }
 `
 
+const DayTitle = styled.span`
+    font-weight: bold;
+`
+
 interface Props {
     dailyData: Array<any>
 }
@@ -115,7 +119,9 @@ const SevenDayForecast = ({ dailyData }: Props) => {
         const MoonIcon = getMoonPhaseIcon(f.moonPhase)
         return (
         <DayTileContainer key={idx}>
-            {formatDate(getDarkskyTimestamp(f.time))}
+            <DayTitle>
+                {formatDate(getDarkskyTimestamp(f.time))}
+            </DayTitle>
             {renderTempRow(f.temperatureHigh, f.temperatureLow)}
 
             <IconContainer>

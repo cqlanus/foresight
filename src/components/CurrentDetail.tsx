@@ -12,21 +12,33 @@ const Title = styled.p`
     margin: 0 1ch 0 0;
 `
 
-const Detail = styled.p`
+const DetailContainer = styled.span`
+    background-color: ${p => p.color};
+    padding: .1rem .3rem;
+    border-radius: .1rem;
+    color: ${p => p.color ? '#fff' : '#000'};
+    font-weight: ${p => p.color ? 'bold' : 'none'};
+`
 
+const Detail = styled.p`
 `
 
 interface Props {
     detail: number,
     title: string,
-    units: string
+    units: string,
+    sigfigs?: number,
+    background?: string,
 }
 
-const CurrentDetail = ({ detail = 0, title = "", units = "" }: Props) => {
+const CurrentDetail = ({ detail = 0, title = "", units = "", sigfigs = 3, background }: Props) => {
     return (
         <Container>
             <Title>{`${title}:`}</Title>
-            <Detail>{`${detail}${units}`}</Detail>
+            <DetailContainer color={background} >
+
+                <Detail >{`${detail.toPrecision(sigfigs)}${units}`}</Detail>
+            </DetailContainer>
         </Container>
     )
 }
