@@ -18,7 +18,7 @@ import CurrentConditions from './components/CurrentConditions'
 
 import { getDarkSkyHourlyForecast } from './hooks/nws'
 import { initialUnitsState, unitsReducer, UNITS_MAP, State } from './hooks/units'
-import { getLocation, getCoordinates, getPlace } from './hooks/location'
+import { getCurrentLocation, getCoordinates, getPlace } from './hooks/location'
 
 interface ContainerProps {
     isDarkMode: boolean
@@ -68,16 +68,17 @@ const App: React.FC = () => {
 
     const toggleDarkMode = () => setDarkMode(!isDarkMode)
 
-    const getData = async () => {
+    const getLocalData = async () => {
         try {
             setLoading(true)
-            const position = await getLocation()
-            setLocation(position)
-            const placeObject = await getPlace(position.coords)
-            setPlace(placeObject)
-            const darkSkyData = await getDarkSkyHourlyForecast(position)
-
-            setForecast(darkSkyData)
+            const place = await getCurrentLocation()
+            if (place) {
+                const { coords } = place
+                setLocation(place)
+                const darkSkyData = await getDarkSkyHourlyForecast({coords})
+    
+                setForecast(darkSkyData)
+            }
         } catch (error) {
             console.log({ error })
         }
@@ -85,7 +86,7 @@ const App: React.FC = () => {
     }
 
     useEffect(() => {
-        getData()
+        getLocalData()
     }, [])
 
 
@@ -101,9 +102,9 @@ const App: React.FC = () => {
         try {
             setLoading(true)
             const position = await getCoordinates(searchTerm)
-            setLocation(position)
             const placeObject = await getPlace(position.coords)
             setPlace(placeObject)
+            setLocation(placeObject)
             const darkSkyData = await getDarkSkyHourlyForecast(position)
             setForecast(darkSkyData)
         } catch (error) {
@@ -125,7 +126,7 @@ const App: React.FC = () => {
                 defaultChecked={isDarkMode} />
           </ToggleContainer>
           <SearchContainer>
-              <SearchInput place={place} relocalize={getData} onSubmit={handleSearch} />
+              <SearchInput place={place} relocalize={getLocalData} onSubmit={handleSearch} />
           </SearchContainer>
 
       </TopBar>
@@ -134,7 +135,7 @@ const App: React.FC = () => {
     const renderBottomBar = () => (
         <TopBar>
               <UnitsModal handleClick={handleClick} selectedUnits={units} allUnits={UNITS_MAP} />
-              <ForecastDiscussionModal/>
+              <ForecastDiscussionModal location={location} />
 
         </TopBar>
     )
@@ -146,7 +147,7 @@ const App: React.FC = () => {
                 <CurrentConditions currentlyData={currently} />
                 <SevenDayForecast dailyData={dailyData} />
                 <Graph units={units} dailyData={dailyData} hourlyData={hourlyData} />
-                    <ForecastMap coords={location.coords}/>
+                    <ForecastMap location={place || location} />
                 {renderBottomBar()}
             </Container>
           <Loader active={loading}/>

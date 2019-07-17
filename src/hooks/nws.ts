@@ -3,6 +3,9 @@ import { FORECAST_LINKS } from "../constants/nws"
 import { request } from "../utils/common"
 import { DarkSky } from '../types/darksky'
 import API from '../api'
+import { Coords } from "../types/location";
+import { LocationResponse } from "../types/nws";
+import api from "../api";
 
 const lat = "41.8781"
 const lng = "-87.6298"
@@ -147,9 +150,15 @@ const formatDiscussion = (text: string) => {
     return discussionObject
 }
 
-export const getScentificDiscussion = async (locationId: string = "LOT") => {
+export const getClosestLocationId = async (coords: Coords): Promise<LocationResponse> => {
+    const response = await api.closestLocation(coords)
+    return response
+}
+
+export const getScentificDiscussion = async (coords: Coords) => {
     try {
-        const productId = await getLatestDiscussionId(locationId)
+        const { properties } = await getClosestLocationId(coords)
+        const productId = await getLatestDiscussionId(properties.cwa)
         const url = productUrl(productId)
         const discussion = await request(url)
         const { productText = "" } = discussion || {}

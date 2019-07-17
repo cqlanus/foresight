@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { Modal, Button } from 'semantic-ui-react'
 import styled from 'styled-components'
 
-import { getScentificDiscussion } from '../hooks/nws'
+import { getScentificDiscussion, getClosestLocationId } from '../hooks/nws'
 
 import Loader from '../components/Loader'
+import { Coords } from '../types/location';
 
 const DiscussionContainer = styled.div`
     margin-bottom: 1em;
@@ -20,6 +21,12 @@ const DiscussionParagraph = styled.p`
     max-width: 60ch;
 
 `
+
+interface Props {
+    location: {
+        coords: Coords
+    }
+}
 
 interface ForecastDiscussion {
     "SHORT TERM"?: Array<string>,
@@ -39,19 +46,15 @@ const DISCUSSION_MAP: DiscussionMap = {
     aviation: "AVIATION"
 }
 
-const ForecastDiscussionModal = () => {
-
+const ForecastDiscussionModal = ({ location }: Props) => {
     const intitialState: ForecastDiscussion = {}
     const [discussion, setDiscussion] = useState(intitialState)
     const [ loading, setLoading ] = useState(false)
     
     const getData = async () => {
-        if (Object.keys(discussion).length > 0) {
-            return discussion
-        }
         try {
             setLoading(true)
-            const response = await getScentificDiscussion()
+            const response = await getScentificDiscussion(location.coords)
             setDiscussion(response || {})
         } catch (error) {
             console.log({ error })
