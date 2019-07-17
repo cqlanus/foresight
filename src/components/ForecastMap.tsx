@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import MapManager from '../hooks/openLayers'
+import MapManager from '../hooks/maps'
 import { Button } from 'semantic-ui-react'
 
 const StyledMap = styled.div`
@@ -33,7 +33,7 @@ const ForecastMap = ({ coords = defaultCoords }: MapProps) => {
             manager.setView && manager.setView(coords)
         } else {
             const manager = new MapManager(coords)
-            manager.getMap().setTarget(MAP_ID)
+            // manager.getMap().setTarget(MAP_ID)
 
             setManager(manager)
         }
