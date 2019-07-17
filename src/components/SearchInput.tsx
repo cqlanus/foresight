@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Input, InputOnChangeData, Form, Button, Icon } from 'semantic-ui-react'
-import { FaLocationArrow } from 'react-icons/fa'
+import React, { useState } from 'react'
+import { Input, InputOnChangeData, Form, Button } from 'semantic-ui-react'
 import styled from 'styled-components'
-import { Feature } from '../api';
+import { Place } from '../types/location'
 
 const FormContainer = styled(Form)`
     display: flex;
@@ -15,7 +14,7 @@ const StyledInput = styled(Input)`
 interface Props {
     onSubmit: (term: string) => void,
     relocalize: () => void,
-    place: Partial<Feature>
+    place: Partial<Place>
 }
 
 
@@ -24,12 +23,6 @@ const SearchInput = ({ onSubmit, relocalize, place = {} }: Props) => {
 
 
     const [ searchTerm, setSearchTerm ] = useState("")
-
-    useEffect(() => {
-        if (place.text && searchTerm !== place.text) {
-            setSearchTerm(place.text)
-        }
-    }, [place])
     
     const handleChange = (e: React.ChangeEvent, data: InputOnChangeData) => setSearchTerm(data.value)
     
@@ -41,7 +34,7 @@ const SearchInput = ({ onSubmit, relocalize, place = {} }: Props) => {
         <FormContainer onSubmit={handleClick}>
                 <Button onClick={relocalize} icon="location arrow" />
                 <StyledInput value={searchTerm} placeholder="Search..." onChange={handleChange} />
-                <Button icon="search" />
+                <Button icon="search" type="submit" />
         </FormContainer>
             
     )

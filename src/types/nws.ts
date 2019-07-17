@@ -38,3 +38,11 @@ export interface GridDataResponse {
     id: string
     properties: GridDataProperties
 }
+
+
+export interface LocationResponse {
+    properties: {
+        cwa: string
+        radarStation: string
+    }
+}
