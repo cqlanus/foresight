@@ -18,9 +18,7 @@ interface Props {
 }
 
 
-
 const SearchInput = ({ onSubmit, relocalize, place = {} }: Props) => {
-
 
     const [ searchTerm, setSearchTerm ] = useState("")
     
@@ -32,9 +30,9 @@ const SearchInput = ({ onSubmit, relocalize, place = {} }: Props) => {
     
     return (
         <FormContainer onSubmit={handleClick}>
-                <Button onClick={relocalize} icon="location arrow" />
+                <Button attached="left" onClick={relocalize} icon="location arrow" />
                 <StyledInput value={searchTerm} placeholder="Search..." onChange={handleChange} />
-                <Button icon="search" type="submit" />
+                <Button attached="right" icon="search" type="submit" />
         </FormContainer>
             
     )

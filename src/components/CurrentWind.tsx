@@ -24,12 +24,12 @@ const Container = styled.div`
 `
 
 const Circle = styled.div`
-display: flex;
-flex-direction: column;
-border: .2em solid black;
-border-radius: 50%;
-height: 6rem;
-width: 6rem;
+    display: flex;
+    flex-direction: column;
+    border: .2em solid black;
+    border-radius: 50%;
+    height: 6rem;
+    width: 6rem;
 
 @media (max-width: 500px) {
     height: 5rem;

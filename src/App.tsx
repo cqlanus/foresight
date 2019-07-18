@@ -37,6 +37,11 @@ const TopBar = styled.div`
 
 `
 
+const BottomBar = styled.div`
+    display: flex;
+    align-items: stretch;
+`
+
 const SearchContainer = styled.div`
     flex-grow: 1;
 `
@@ -133,11 +138,11 @@ const App: React.FC = () => {
     )
 
     const renderBottomBar = () => (
-        <TopBar>
+        <BottomBar>
               <UnitsModal handleClick={handleClick} selectedUnits={units} allUnits={UNITS_MAP} />
               <ForecastDiscussionModal location={location} />
 
-        </TopBar>
+        </BottomBar>
     )
 
     return (

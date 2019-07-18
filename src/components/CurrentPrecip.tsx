@@ -1,18 +1,21 @@
 import React from 'react'
 import styled from 'styled-components'
+import { FiDroplet } from 'react-icons/fi'
 
 import ForecastIcon from './ForecastIcon'
 
 const Main = styled.div`
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    font-size: 6rem;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 4rem;
     color: steelblue;
 `
 
 const Text = styled.p`
     font-size: 2rem;
+    text-align: center;
 `
 
 interface Props {
@@ -30,8 +33,8 @@ const CurrentPrecip = ({
 }: Props) => {
     return (
         <Main>
-            <ForecastIcon icon="rain" />
-            <Text>{`${precipProbability}%`}</Text>
+            <FiDroplet />
+            <Text>{`${(precipProbability * 100)}%`}</Text>
         </Main>
     )
 }

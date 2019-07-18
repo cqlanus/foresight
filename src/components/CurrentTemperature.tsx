@@ -22,11 +22,9 @@ const Container = styled.div`
     height: 8rem;
     width: 8rem;
     margin-bottom: 0.5em;
-    /* width: 15vw;
-    height: 15vw; */
-    @media (max-width: 800px) {
-        /* width: 20vw;
-        height: 20vw; */
+    @media (max-width: 600px) {
+        width: 20vw;
+        height: 20vw;
     }
 `
 
@@ -43,6 +41,7 @@ const Temp = styled.div`
 `
 
 const ApparentTemp = styled.div`
+    text-align: center;
     @media (max-width: 600px) {
         font-size: 0.8em;
     }

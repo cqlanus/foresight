@@ -25,14 +25,6 @@ interface Props {
 
 // const TitleItem = styled.span``
 
-const Grid = styled.div`
-    display: grid;
-    min-height: 8em;
-    grid-template-areas: 
-        "main"
-        "details";
-`
-
 const ItemContainer = styled.div`
     display: flex;
     justify-content: center;
@@ -45,12 +37,28 @@ const DetailsContainer = styled(ItemContainer)`
     padding: 1rem;
     flex-wrap: wrap;
 `
+const SubContainer = styled.div`
+    flex: 1;
+    display: flex;
+    justify-content: center;
+`
 
 const MainContainer = styled(ItemContainer)`
     grid-area: main;
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
+    align-items: flex-end;
+
+    /* display: grid; */
+    grid-template-areas: 
+        "temp icon precip wind";
     margin: 1rem 0;
+
+    @media (max-width: 500px) {
+        grid-template-areas: 
+            "temp icon"
+            "precip wind";
+    }
 `
 
 const IconContainer = styled(ItemContainer)`
@@ -60,9 +68,17 @@ const IconContainer = styled(ItemContainer)`
     font-size: 6em;
     color: rgba(0,0,0,0.6);
     @media (max-width: 500px) {
-        font-size: 4em;
+        font-size: 5em;
         
     }
+`
+
+const PrecipContainer = styled(ItemContainer)`
+    grid-area: precip;
+`
+
+const WindContainer = styled(ItemContainer)`
+    grid-area: wind;
 `
 
 const TextContainer = styled.div`
@@ -82,7 +98,37 @@ const CurrentConditions = ({currentlyData}: Props) => {
                 <TitleItem>Current Conditions</TitleItem>
                 <TitleItem>Chicago, IL</TitleItem>
             </TitleBar> */}
-            <Grid>
+                
+                <MainContainer>
+                <SubContainer>
+                    <CurrentTemperature 
+                        apparentTemperature={apparentTemperature}
+                        temperature={temperature} />
+                    <IconContainer>
+                        <ForecastIcon icon={icon} />
+                        <TextContainer>{summary}</TextContainer>
+                    </IconContainer>
+                    
+
+                </SubContainer>
+                <SubContainer>
+                    <PrecipContainer>
+                        <CurrentPrecip
+                            nearestStormBearing={nearestStormBearing}
+                            nearestStormDistance={nearestStormDistance} 
+                            precipIntensity={precipIntensity} 
+                            precipProbability={precipProbability}
+                        />
+                    </PrecipContainer>
+                    <WindContainer>
+                        <CurrentWind 
+                            windBearing={windBearing} 
+                            windGust={windGust} 
+                            windSpeed={windSpeed} />
+                    </WindContainer>
+                </SubContainer>
+                </MainContainer>
+
                 <DetailsContainer>
                     <CurrentDetail 
                         title={'Humidity'} 
@@ -109,26 +155,6 @@ const CurrentConditions = ({currentlyData}: Props) => {
                         sigfigs={2} 
                         background={uvColor} />
                 </DetailsContainer>
-                <MainContainer>
-                    <CurrentTemperature 
-                        apparentTemperature={apparentTemperature}
-                        temperature={temperature} />
-                    <IconContainer>
-                        <ForecastIcon icon={icon} />
-                        <TextContainer>{summary}</TextContainer>
-                    </IconContainer>
-                    <CurrentPrecip
-                        nearestStormBearing={nearestStormBearing}
-                        nearestStormDistance={nearestStormDistance} 
-                        precipIntensity={precipIntensity} 
-                        precipProbability={precipProbability}
-                    />
-                    <CurrentWind 
-                        windBearing={windBearing} 
-                        windGust={windGust} 
-                        windSpeed={windSpeed} />
-                </MainContainer>
-            </Grid>
         </div>
     )
 }

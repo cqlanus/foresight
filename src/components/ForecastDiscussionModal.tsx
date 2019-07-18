@@ -40,6 +40,11 @@ interface DiscussionMap {
     [key: string]: DiscussionKeys
 }
 
+
+const ModButton = styled(Button)`
+    flex: 1;
+`
+
 const DISCUSSION_MAP: DiscussionMap = {
     shortTerm: "SHORT TERM",
     longTerm: "LONG TERM",
