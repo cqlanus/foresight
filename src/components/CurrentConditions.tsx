@@ -12,24 +12,27 @@ import { scaleLinear } from 'd3-scale';
 import { interpolateRgbBasis } from 'd3-interpolate';
 
 import { ThemeContext } from '../context/theme'
+import { Place } from '../types/location';
 
 interface DetailProps {
     isDarkMode: boolean
 }
 
 interface Props {
-    currentlyData: Current
+    currentlyData: Current,
+    place: Place
 }
 
-// const TitleBar = styled.div`
-//     font-size: 2em;
-//     display: flex;
-//     justify-content: space-between;
-//     margin: 0 1em;
-//     padding: 1em 0;
-// `
+const TitleBar = styled.div`
+    font-size: 2em;
+    line-height: 1em;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 1em;
+    padding: 1em 0;
+`
 
-// const TitleItem = styled.span``
+const TitleItem = styled.span``
 
 const ItemContainer = styled.div`
     display: flex;
@@ -45,7 +48,6 @@ const DetailsContainer = styled(ItemContainer)`
     flex-wrap: wrap;
 `
 const SubContainer = styled.div`
-    flex: 1;
     display: flex;
     justify-content: center;
 `
@@ -76,7 +78,7 @@ const WindContainer = styled(ItemContainer)`
     grid-area: wind;
 `
 
-const CurrentConditions = ({currentlyData}: Props) => {
+const CurrentConditions = ({currentlyData, place}: Props) => {
     const { temperature, apparentTemperature, windSpeed, windBearing, windGust, precipProbability, 
         precipIntensity, nearestStormBearing, nearestStormDistance, icon, summary, humidity = 0, uvIndex, dewPoint, pressure, visibility } = currentlyData
     const scale = scaleLinear().domain([0, 10])
@@ -121,10 +123,9 @@ const CurrentConditions = ({currentlyData}: Props) => {
     
     return (
         <div>
-            {/* <TitleBar>
-                <TitleItem>Current Conditions</TitleItem>
-                <TitleItem>Chicago, IL</TitleItem>
-            </TitleBar> */}
+            <TitleBar>
+                <TitleItem>{place.text || "Current Location"}</TitleItem>
+            </TitleBar>
                 
                 <MainContainer>
                     <SubContainer>
