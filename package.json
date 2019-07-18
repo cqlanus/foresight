@@ -14,7 +14,7 @@
         "@types/react": "16.8.22",
         "@types/react-dom": "16.8.4",
         "@types/react-toggle": "^4.0.2",
-        "@types/recharts": "^1.1.17",
+        "@types/recharts": "^1.1.20",
         "@types/styled-components": "^4.1.16",
         "date-fns": "^1.30.1",
         "eslint-plugin-prettier": "^3.1.0",
@@ -38,7 +38,8 @@
         "start": "HTTPS=true react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "postinstall": "sh ./patch/apply_patches.sh"
     },
     "eslintConfig": {
         "extends": "react-app",
