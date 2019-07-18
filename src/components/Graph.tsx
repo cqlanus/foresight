@@ -168,7 +168,7 @@ const Graph = ({ dailyData, hourlyData, units }: Props) => {
             data={hourlyData}
             attributes={TEMP_GRAPH}
             dailyData={dailyData}
-            domain={["dataMin - 10", "dataMax + 10"]}
+            domain={[min => Math.round(min) - 10, max => Math.round(max) + 10]}
             units={{ left: units.degrees }}
             showAstroLabels />
     )
@@ -186,7 +186,7 @@ const Graph = ({ dailyData, hourlyData, units }: Props) => {
         <SubGraph
             data={hourlyData}
             attributes={WIND_GRAPH}
-            domain={[0, 'dataMax + 15']}
+            domain={[0, max => Math.round(max) + 20]}
             units={{left: units.speed }}
             dailyData={dailyData} />
     )

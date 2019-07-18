@@ -1,13 +1,22 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { ThemeContext } from '../context/theme'
+
+
+interface ContainerProps {
+    isDarkMode: boolean
+}
+
 interface Props {
     windSpeed: number
     windBearing: number
     windGust: number
 }
 
-const Main = styled.div``
+const Main = styled.div`
+    color: ${(p: ContainerProps) => p.isDarkMode ? 'white' : 'black'};
+`
 
 const Container = styled.div`
     display: flex;
@@ -26,7 +35,7 @@ const Container = styled.div`
 const Circle = styled.div`
     display: flex;
     flex-direction: column;
-    border: .2em solid black;
+    border: .2em solid;
     border-radius: 50%;
     height: 6rem;
     width: 6rem;
@@ -42,14 +51,14 @@ const Triangle = styled.div`
     height: 0; 
     border-left: .5rem solid transparent;
     border-right: .5rem solid transparent;
-    border-top: 1.5rem solid black;
+    border-top: 1.5rem solid;
     position: absolute;
     top: 0.5rem;
 
     @media (max-width: 500px) {
         border-left: .3rem solid transparent;
         border-right: .3rem solid transparent;
-        border-top: 1rem solid black;
+        border-top: 1rem solid;
         top: 1rem;
     }
 `
@@ -84,17 +93,22 @@ const WindCompass = ({windSpeed = 0,  windGust = 0, windBearing = 0}: Props) => 
 
 const CurrentWind = ({windSpeed = 0,  windGust = 0, windBearing = 0}: Props) => {
     return (
-        <Main>
-            <Grid>
-                <WindCompass windSpeed={windSpeed} windGust={windGust} windBearing={windBearing}/>
+        <ThemeContext.Consumer>
+
+        {({ isDarkMode }) =>
+            <Main isDarkMode={isDarkMode}>
+                <Grid>
+                    <WindCompass windSpeed={windSpeed} windGust={windGust} windBearing={windBearing}/>
+                    <TextContainer>
+                        <Text>{`${Math.round(windSpeed)} mph`}</Text>
+                    </TextContainer>
+                </Grid>
                 <TextContainer>
-                    <Text>{`${Math.round(windSpeed)} mph`}</Text>
+                    <Text>{`Gusts ${Math.round(windGust)} mph`}</Text>
                 </TextContainer>
-            </Grid>
-            <TextContainer>
-                <Text>{`Gusts ${Math.round(windGust)} mph`}</Text>
-            </TextContainer>
-        </Main>
+            </Main>
+        }
+        </ThemeContext.Consumer>
     )
 }
 

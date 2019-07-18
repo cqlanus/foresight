@@ -1,6 +1,5 @@
 import { request } from '../utils/common'
 import { DarkSky } from '../types/darksky'
-import darkSkyData from '../constants/darksky.json'
 import { Coords, SimplePosition, Place } from '../types/location'
 import { LocationResponse } from '../types/nws';
 

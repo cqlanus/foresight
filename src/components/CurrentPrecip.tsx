@@ -2,7 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 import { FiDroplet } from 'react-icons/fi'
 
-import ForecastIcon from './ForecastIcon'
+import { ThemeContext } from '../context/theme'
+
+interface MainProps {
+    isDarkMode: boolean
+}
 
 const Main = styled.div`
     display: flex;
@@ -10,7 +14,7 @@ const Main = styled.div`
     justify-content: flex-end;
     align-items: center;
     font-size: 4rem;
-    color: steelblue;
+    color: ${(props: MainProps) => props.isDarkMode ? 'lightblue' : 'steelblue'};
 `
 
 const Text = styled.p`
@@ -32,10 +36,15 @@ const CurrentPrecip = ({
     precipProbability = 0
 }: Props) => {
     return (
-        <Main>
-            <FiDroplet />
-            <Text>{`${(precipProbability * 100)}%`}</Text>
-        </Main>
+        <ThemeContext.Consumer>
+
+        {({isDarkMode}) =>
+            <Main isDarkMode={isDarkMode} >
+                <FiDroplet />
+                <Text>{`${(precipProbability * 100)}%`}</Text>
+            </Main>}
+        </ThemeContext.Consumer>
+        
     )
 }
 

@@ -4,12 +4,18 @@ import styled from 'styled-components'
 import { Current } from '../types/darksky'
 
 import CurrentTemperature from './CurrentTemperature'
-import ForecastIcon from './ForecastIcon'
 import CurrentWind from './CurrentWind'
 import CurrentPrecip from './CurrentPrecip'
 import CurrentDetail from './CurrentDetail'
+import CurrentSummary from './CurrentSummary'
 import { scaleLinear } from 'd3-scale';
 import { interpolateRgbBasis } from 'd3-interpolate';
+
+import { ThemeContext } from '../context/theme'
+
+interface DetailProps {
+    isDarkMode: boolean
+}
 
 interface Props {
     currentlyData: Current
@@ -33,7 +39,8 @@ const ItemContainer = styled.div`
 `
 
 const DetailsContainer = styled(ItemContainer)`
-    background-color: #e0e1e2;
+    background-color: ${(p: DetailProps) => p.isDarkMode ? 'black' : '#e0e1e2'};
+    color: ${(p: DetailProps) => p.isDarkMode ? 'white' : 'black'};
     padding: 1rem;
     flex-wrap: wrap;
 `
@@ -61,18 +68,6 @@ const MainContainer = styled(ItemContainer)`
     }
 `
 
-const IconContainer = styled(ItemContainer)`
-    grid-area: icon;
-    flex-direction: column;
-    justify-content: center;
-    font-size: 6em;
-    color: rgba(0,0,0,0.6);
-    @media (max-width: 500px) {
-        font-size: 5em;
-        
-    }
-`
-
 const PrecipContainer = styled(ItemContainer)`
     grid-area: precip;
 `
@@ -81,18 +76,50 @@ const WindContainer = styled(ItemContainer)`
     grid-area: wind;
 `
 
-const TextContainer = styled.div`
-    font-size: 1rem;
-`
-
 const CurrentConditions = ({currentlyData}: Props) => {
     const { temperature, apparentTemperature, windSpeed, windBearing, windGust, precipProbability, 
-        precipIntensity, nearestStormBearing, nearestStormDistance, icon, summary, humidity, uvIndex, dewPoint, pressure, visibility } = currentlyData
+        precipIntensity, nearestStormBearing, nearestStormDistance, icon, summary, humidity = 0, uvIndex, dewPoint, pressure, visibility } = currentlyData
     const scale = scaleLinear().domain([0, 10])
     const uvNumber = scale(uvIndex)
     const interpolator = interpolateRgbBasis(['blue', 'green', 'goldenrod', 'red'])
     const uvColor = interpolator(uvNumber)
-        return (
+
+    const renderDetails = () => (
+        <ThemeContext.Consumer>
+
+        {({isDarkMode}) =>
+            <DetailsContainer isDarkMode={isDarkMode} >
+                <CurrentDetail 
+                    title={'Humidity'} 
+                    detail={humidity * 100} 
+                    units={'%'} />
+                <CurrentDetail 
+                    title={'Dew Point'} 
+                    detail={dewPoint} 
+                    units={"°"}  />
+                <CurrentDetail 
+                    title={'Pressure'} 
+                    detail={pressure} 
+                    units={'mb'} 
+                    sigfigs={5} />
+                <CurrentDetail 
+                    title={'Visibility'} 
+                    detail={visibility} 
+                    units={'mi'} 
+                    sigfigs={2} />
+                <CurrentDetail 
+                    title={'UV Index'} 
+                    detail={uvIndex} 
+                    units={''} 
+                    sigfigs={2} 
+                    background={uvColor} />
+            </DetailsContainer>
+        }
+        </ThemeContext.Consumer>
+        
+    )
+    
+    return (
         <div>
             {/* <TitleBar>
                 <TitleItem>Current Conditions</TitleItem>
@@ -100,61 +127,32 @@ const CurrentConditions = ({currentlyData}: Props) => {
             </TitleBar> */}
                 
                 <MainContainer>
-                <SubContainer>
-                    <CurrentTemperature 
-                        apparentTemperature={apparentTemperature}
-                        temperature={temperature} />
-                    <IconContainer>
-                        <ForecastIcon icon={icon} />
-                        <TextContainer>{summary}</TextContainer>
-                    </IconContainer>
-                    
-
-                </SubContainer>
-                <SubContainer>
-                    <PrecipContainer>
-                        <CurrentPrecip
-                            nearestStormBearing={nearestStormBearing}
-                            nearestStormDistance={nearestStormDistance} 
-                            precipIntensity={precipIntensity} 
-                            precipProbability={precipProbability}
-                        />
-                    </PrecipContainer>
-                    <WindContainer>
-                        <CurrentWind 
-                            windBearing={windBearing} 
-                            windGust={windGust} 
-                            windSpeed={windSpeed} />
-                    </WindContainer>
-                </SubContainer>
+                    <SubContainer>
+                        <CurrentTemperature 
+                            apparentTemperature={apparentTemperature}
+                            temperature={temperature} />
+                        <CurrentSummary icon={icon} summary={summary} />
+                    </SubContainer>
+                    <SubContainer>
+                        <PrecipContainer>
+                            <CurrentPrecip
+                                nearestStormBearing={nearestStormBearing}
+                                nearestStormDistance={nearestStormDistance} 
+                                precipIntensity={precipIntensity} 
+                                precipProbability={precipProbability}
+                            />
+                        </PrecipContainer>
+                        <WindContainer>
+                            <CurrentWind 
+                                windBearing={windBearing} 
+                                windGust={windGust} 
+                                windSpeed={windSpeed} />
+                        </WindContainer>
+                    </SubContainer>
                 </MainContainer>
 
-                <DetailsContainer>
-                    <CurrentDetail 
-                        title={'Humidity'} 
-                        detail={humidity * 100} 
-                        units={'%'} />
-                    <CurrentDetail 
-                        title={'Dew Point'} 
-                        detail={dewPoint} 
-                        units={"°"}  />
-                    <CurrentDetail 
-                        title={'Pressure'} 
-                        detail={pressure} 
-                        units={'mb'} 
-                        sigfigs={5} />
-                    <CurrentDetail 
-                        title={'Visibility'} 
-                        detail={visibility} 
-                        units={'mi'} 
-                        sigfigs={2} />
-                    <CurrentDetail 
-                        title={'UV Index'} 
-                        detail={uvIndex} 
-                        units={''} 
-                        sigfigs={2} 
-                        background={uvColor} />
-                </DetailsContainer>
+                { renderDetails() }
+                
         </div>
     )
 }

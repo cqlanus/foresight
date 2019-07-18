@@ -20,6 +20,8 @@ import { getDarkSkyHourlyForecast } from './hooks/nws'
 import { initialUnitsState, unitsReducer, UNITS_MAP, State } from './hooks/units'
 import { getCurrentLocation, getCoordinates, getPlace } from './hooks/location'
 
+import { ThemeContext } from './context/theme'
+
 interface ContainerProps {
     isDarkMode: boolean
 }
@@ -50,12 +52,8 @@ const ToggleContainer = styled.div`
     margin: 0 1em;
 `
 
-// const MapContainer = styled.div`
-//     height: 400px;
-//     width: 100%;
-// `
-
 const App: React.FC = () => {
+    
     const [units, dispatch] = useReducer(unitsReducer, initialUnitsState)
 
     const setUnit = (key: string, value: string) => {
@@ -68,6 +66,9 @@ const App: React.FC = () => {
     const [ forecast, setForecast ] = useState(initial)
     const [ loading, setLoading ] = useState(false)
     const [ isDarkMode, setDarkMode ] = useState(false)
+
+    
+
     const [ location, setLocation ] = useState(initial)
     const [ place, setPlace ] = useState(initial)
 
@@ -147,15 +148,17 @@ const App: React.FC = () => {
 
     return (
         <div className="App">
-            <Container isDarkMode={isDarkMode}>
-                {renderTopBar()}
-                <CurrentConditions currentlyData={currently} />
-                <SevenDayForecast dailyData={dailyData} />
-                <Graph units={units} dailyData={dailyData} hourlyData={hourlyData} />
-                    <ForecastMap location={place || location} />
-                {renderBottomBar()}
-            </Container>
-          <Loader active={loading}/>
+            <ThemeContext.Provider value={{isDarkMode, toggleDarkMode}}>
+                <Container isDarkMode={isDarkMode}>
+                    {renderTopBar()}
+                    <CurrentConditions currentlyData={currently} />
+                    <SevenDayForecast dailyData={dailyData} />
+                    <Graph units={units} dailyData={dailyData} hourlyData={hourlyData} />
+                        <ForecastMap location={place || location} />
+                    {renderBottomBar()}
+                </Container>
+            <Loader active={loading}/>
+            </ThemeContext.Provider>
         </div>
     );
 }

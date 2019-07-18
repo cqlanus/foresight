@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Modal, Button } from 'semantic-ui-react'
 import styled from 'styled-components'
 
-import { getScentificDiscussion, getClosestLocationId } from '../hooks/nws'
+import { getScentificDiscussion } from '../hooks/nws'
 
 import Loader from '../components/Loader'
 import { Coords } from '../types/location';
@@ -39,11 +39,6 @@ type DiscussionKeys = keyof ForecastDiscussion
 interface DiscussionMap {
     [key: string]: DiscussionKeys
 }
-
-
-const ModButton = styled(Button)`
-    flex: 1;
-`
 
 const DISCUSSION_MAP: DiscussionMap = {
     shortTerm: "SHORT TERM",

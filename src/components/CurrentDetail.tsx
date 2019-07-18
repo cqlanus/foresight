@@ -16,7 +16,7 @@ const DetailContainer = styled.span`
     background-color: ${p => p.color};
     padding: .1rem .3rem;
     border-radius: .1rem;
-    color: ${p => p.color ? '#fff' : '#000'};
+    color: ${p => p.color ? '#fff' : 'inherit'};
     font-weight: ${p => p.color ? 'bold' : 'none'};
 `
 

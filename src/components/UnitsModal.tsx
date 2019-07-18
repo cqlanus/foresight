@@ -18,10 +18,6 @@ const ButtonGroup = styled.div`
     padding: 1em 0;
 `
 
-const ModButton = styled(Button)`
-    flex: 1;
-`
-
 const ModalButton = <Button fluid color="grey">Customize</Button>
 
 interface Props {

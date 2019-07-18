@@ -90,7 +90,7 @@ const Separator = styled.span`
         &:before {
             content: ""
         }
-        border-bottom: 2px solid #000;
+        border-bottom: 2px solid;
         width: 100%;
     }
 `
