@@ -2,7 +2,12 @@ import React from 'react'
 import { ResponsiveContainer, CartesianGrid, ComposedChart, Area, Line, XAxis, YAxis, Tooltip, Legend, AxisDomain } from 'recharts'
 import { WiMoonFirstQuarter } from "react-icons/wi"
 import { getDarkskyTimestamp, isMorning, formatDate, convertToPercent } from '../utils/common';
-// import { convert, UnitKeys } from '../utils/units'
+
+declare module "recharts" {
+    interface TooltipProps {
+        contentStyle?: object
+    }
+}
 
 const AstroGraphic = ({ payload, show }: { payload?: any, show: boolean }) => {
     const time = payload.value
