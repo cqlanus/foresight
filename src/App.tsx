@@ -151,7 +151,7 @@ const App: React.FC = () => {
             <ThemeContext.Provider value={{isDarkMode, toggleDarkMode}}>
                 <Container isDarkMode={isDarkMode}>
                     {renderTopBar()}
-                    <CurrentConditions currentlyData={currently} />
+                    <CurrentConditions place={place} currentlyData={currently} />
                     <SevenDayForecast dailyData={dailyData} />
                     <Graph units={units} dailyData={dailyData} hourlyData={hourlyData} />
                         <ForecastMap location={place || location} />
