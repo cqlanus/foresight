@@ -15,13 +15,8 @@ class API {
     getForecast = async (position: any) => {
         const { coords: { latitude, longitude } } = position
         const url = `${this.BASE_URL}/forecast?latitude=${latitude}&longitude=${longitude}`
-        const headers = {
-            "Access-Control-Allow-Origin": "https://localhost:3000/",
-            "Access-Control-Allow-Credential": true,
-        }
         const params = {
             credentials: "omit",
-            headers,
         }
         const response = await request(url, params)
         return new DarkSky(response)
@@ -52,8 +47,6 @@ class API {
         const url = `${this.NWS_URL}/points/${point}`
         const response = await request(url)
 
-        console.log({response})
-        
         return response
 
     }
