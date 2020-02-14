@@ -8,7 +8,7 @@ interface ReverseGeocodeResponse {
 }
 
 class API {
-    BASE_URL = 'http://darkskyserver-env.ay8mnafzh5.us-east-2.elasticbeanstalk.com/'
+    BASE_URL = 'http://darkskyserver-env.ay8mnafzh5.us-east-2.elasticbeanstalk.com'
     LOCAL = 'https://localhost:5000'
     NWS_URL = 'https://api.weather.gov'
 
